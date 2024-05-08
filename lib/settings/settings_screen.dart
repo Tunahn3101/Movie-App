@@ -22,7 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     final selectedColor = isDarkMode ? Colors.white : Colors.black54;
-    final selectedIcon = isDarkMode ?? Colors.white;
+
     final sp = context.watch<SignInProvider>();
     return Scaffold(
       body: SingleChildScrollView(
@@ -80,7 +80,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 height: 20,
               ),
               Container(
-                  height: 158,
+                  height: 105,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: selectedColor)),
@@ -122,42 +122,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         height: 1, // Độ dày của đường kẻ
                         color: selectedColor, // Màu sắc của đường kẻ
                       ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: SizedBox(
-                          height: 51,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/ic-password.png',
-                                  width: 32,
-                                  height: 32,
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                const Expanded(
-                                  child: Text(
-                                    'Change password',
-                                    style: TextStyle(
-                                      fontFamily: 'SF Pro Display',
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                                Image.asset('assets/images/ic-more.png')
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 1, // Độ dày của đường kẻ
-                        color: selectedColor, // Màu sắc của đường kẻ
-                      ),
                       Container(
                         height: 51,
                         decoration: BoxDecoration(
@@ -167,7 +131,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: Row(
                           children: [
                             Image.asset(
-                              'assets/images/dark-mode.png',
+                              'assets/images/ic-darkMode.png',
                               width: 32,
                               height: 32,
                             ),

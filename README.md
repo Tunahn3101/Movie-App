@@ -1,16 +1,15 @@
 # movieapp
 
-A new Flutter project.
+Flutter project using API TMDB(The Movie Database)
 
-## Getting Started
+## api doc
 
-This project is a starting point for a Flutter application.
+[](https://developer.themoviedb.org/docs/getting-started)
 
-A few resources to get you started if this is your first Flutter project:
+### info
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<img src="assets/readme_images/1.png" width="150"><img src="assets/readme_images/2.png" width="150"><img src="assets/readme_images/3.png" width="150"><img src="assets/readme_images/4.png" width="150"><img src="assets/readme_images/5.png" width="150"><img src="assets/readme_images/6.png" width="150"><img src="assets/readme_images/7.png" width="150">
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<video controls autoplay>
+        <source src="assets/readme_images/info.mp4">
+</video>

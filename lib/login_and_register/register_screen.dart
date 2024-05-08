@@ -223,7 +223,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       'assets/images/Fill.png',
                                       width: 11,
                                       height: 7.97,
-                                      color: const Color(0xFF303C41),
                                     ),
                                   )
                                 : null,
