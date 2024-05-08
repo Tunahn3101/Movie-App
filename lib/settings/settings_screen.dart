@@ -16,6 +16,16 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool switchValue = true;
+  Future getData() async {
+    final sp = context.read<SignInProvider>();
+    sp.getDataFromSharedPreferences();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           horizontal: 12, vertical: 8),
                       child: CircleAvatar(
                         radius: 30,
-                        backgroundImage: NetworkImage(sp.imageUrl ??
-                            'https://cdn1.iconfinder.com/data/icons/round2-set/25/Profile_ic-512.png'),
+                        backgroundImage: NetworkImage('${sp.imageUrl}'),
                       ),
                     ),
                     Column(

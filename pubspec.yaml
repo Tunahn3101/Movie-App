@@ -51,6 +51,14 @@ dependencies:
   cloud_firestore: ^4.17.2
   google_sign_in: ^6.2.1
   shared_preferences: ^2.2.3
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: "AppIcon"
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +85,7 @@ flutter:
   assets:
     - assets/color_cinema_icons/
     - assets/images/
+    - assets/icon/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

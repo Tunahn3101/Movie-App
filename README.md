@@ -4,7 +4,7 @@ Flutter project using API TMDB(The Movie Database)
 
 ## api doc
 
-[](https://developer.themoviedb.org/docs/getting-started)
+[https://developer.themoviedb.org/docs/getting-started](https://developer.themoviedb.org/docs/getting-started)
 
 ### info
 

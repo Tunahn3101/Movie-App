@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieapp/login_and_register/login_screen.dart';
 import 'package:movieapp/ui/ui_bottom_navigation.dart';

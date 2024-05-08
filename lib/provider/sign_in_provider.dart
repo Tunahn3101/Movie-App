@@ -53,6 +53,32 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // sign in with email
+
+  // sign in with email
+  Future signInWithEmail(String email, String password) async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final User? userDetails = credential.user;
+      if (userDetails != null) {
+        _name = userDetails.displayName ?? "New User";
+        _email = userDetails.email;
+        _imageUrl = userDetails.photoURL ??
+            "https://cdn1.iconfinder.com/data/icons/round2-set/25/Profile_ic-512.png";
+        _provider = "EMAIL";
+        _uid = userDetails.uid;
+        notifyListeners();
+      }
+    } on FirebaseAuthException catch (e) {
+      _hasError = true;
+      _errorCode = e.code;
+      notifyListeners();
+    }
+  }
+
   // sign in with google
   Future signInWithGoogle() async {
     final GoogleSignInAccount? googleSignInAccount =

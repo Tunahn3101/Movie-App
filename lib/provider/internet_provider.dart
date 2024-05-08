@@ -11,6 +11,7 @@ class InternetProvider extends ChangeNotifier {
 
   Future checkInternetConnection() async {
     var result = await Connectivity().checkConnectivity();
+    // ignore: unrelated_type_equality_checks
     if (result == ConnectivityResult.none) {
       _hasInternet = false;
     } else {

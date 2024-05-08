@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:movieapp/ui/ui_bottom_navigation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:movieapp/handlesignin/email_sign_in.dart';
 
 import '../handlesignin/google_sign_in.dart';
 import '../utils/action_button_social.dart';
@@ -61,70 +58,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return password.isNotEmpty && password.length >= 8;
   }
 
-  Future<void> _submitForm() async {
+  void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      try {
-        final credential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-        final User? user = credential.user;
-        if (user != null) {
-          // Lưu thông tin người dùng
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('is_logged_in', true);
-          await prefs.setString('uid', user.uid);
-          await prefs.setString('email', user.email ?? '');
-          await prefs.setString('name', user.displayName ?? '');
-          await prefs.setString('image_url', user.photoURL ?? '');
-
-          // Cập nhật tình trạng đăng nhập hoặc thông tin người dùng trong provider nếu bạn sử dụng
-          // Kế đến, chuyển người dùng đến màn hình chính
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const UiBottomNavigation()),
-          );
-
-          // Tùy chọn: Lưu thông tin người dùng vào Firestore nếu muốn
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).set(
-              {
-                'email': user.email,
-                'name': user.displayName,
-                'image_url': user.photoURL,
-                'provier': "EMAIL",
-                'uid': user.uid,
-                // thêm bất kỳ thông tin nào khác bạn muốn lưu trữ
-              },
-              SetOptions(
-                  merge:
-                      true)); // Sử dụng SetOptions để không ghi đè dữ liệu cũ nếu tồn tại
-        }
-      } on FirebaseAuthException catch (e) {
-        _showErrorDialog(e.code);
-      }
+      handleEmailSignIn(context, emailController.text, passwordController.text);
     }
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: const Text('Login Failed'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override

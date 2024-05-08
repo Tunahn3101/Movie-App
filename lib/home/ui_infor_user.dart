@@ -26,6 +26,17 @@ class _UIInforUserState extends State<UIInforUser> {
     }
   }
 
+  Future getData() async {
+    final sp = context.read<SignInProvider>();
+    sp.getDataFromSharedPreferences();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
@@ -40,7 +51,7 @@ class _UIInforUserState extends State<UIInforUser> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '👋 Hi ${sp.name ?? 'User'},',
+                  '👋 Hi ${sp.name},',
                   maxLines: 1,
                   style: GoogleFonts.inter(
                       textStyle: const TextStyle(fontSize: 16)),
@@ -65,10 +76,7 @@ class _UIInforUserState extends State<UIInforUser> {
           ),
           const SizedBox(width: 16),
           CircleAvatar(
-            radius: 30,
-            backgroundImage: NetworkImage(sp.imageUrl ??
-                'https://cdn1.iconfinder.com/data/icons/round2-set/25/Profile_ic-512.png'),
-          ),
+              radius: 30, backgroundImage: NetworkImage('${sp.imageUrl}')),
         ],
       ),
     );
