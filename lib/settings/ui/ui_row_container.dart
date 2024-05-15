@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../themes/theme_provider.dart';
 
-class UIRowContainer extends StatelessWidget {
+class UIRowContainer extends StatefulWidget {
   const UIRowContainer({
     super.key,
     required this.action,
@@ -14,31 +14,29 @@ class UIRowContainer extends StatelessWidget {
   final ActionModel action;
 
   @override
-  Widget build(BuildContext context) {
-    bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
+  State<UIRowContainer> createState() => _UIRowContainerState();
+}
 
-    final selectedColor = isDarkMode ? Colors.white : Colors.black54;
+class _UIRowContainerState extends State<UIRowContainer> {
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: action.ontap,
-      child: Container(
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(width: 1, color: selectedColor)),
-        height: 52,
+      onTap: widget.action.ontap,
+      child: SizedBox(
+        height: 51,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
               Image.asset(
-                action.icon,
+                widget.action.icon,
                 width: 32,
                 height: 32,
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  action.title,
+                  widget.action.title,
                   style: const TextStyle(
                     fontFamily: 'SF Pro Display',
                     fontWeight: FontWeight.w500,
@@ -46,8 +44,8 @@ class UIRowContainer extends StatelessWidget {
                   ),
                 ),
               ),
-              if (action.isMore) Image.asset(AppImage.icMore),
-              if (action.darkMode)
+              if (widget.action.isMore) Image.asset(AppImage.icMore),
+              if (widget.action.darkMode)
                 Switch(
                   value: Provider.of<ThemeProvider>(context, listen: false)
                       .isDarkMode,

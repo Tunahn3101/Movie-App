@@ -14,18 +14,12 @@ class Genres extends StatefulWidget {
 }
 
 class _GenresState extends State<Genres> {
-  final List<String> svgPicture = [
-    'assets/color_cinema_icons/TV.svg',
-    'assets/color_cinema_icons/Alien.svg',
-    'assets/color_cinema_icons/Comedy.svg',
-    'assets/color_cinema_icons/Moon.svg',
-  ];
-  final List<String> nameSvgPicture = [
-    'On Tv',
-    'Alien',
-    'Comedy',
-    'Science Fiction',
-  ];
+  final Map<String, String> genresMap = {
+    'assets/color_cinema_icons/TV.svg': 'On Tv',
+    'assets/color_cinema_icons/Alien.svg': 'Alien',
+    'assets/color_cinema_icons/Comedy.svg': 'Comedy',
+    'assets/color_cinema_icons/Moon.svg': 'Science Fiction',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +47,10 @@ class _GenresState extends State<Genres> {
           height: 60,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: svgPicture.length,
+            itemCount: genresMap.length,
             itemBuilder: (context, index) {
+              String svgPath = genresMap.keys.elementAt(index);
+              String genreName = genresMap.values.elementAt(index);
               return Padding(
                 padding: const EdgeInsets.only(right: 25),
                 child: ElevatedButton(
@@ -67,15 +63,16 @@ class _GenresState extends State<Genres> {
                   child: Column(
                     children: [
                       SvgPicture.asset(
-                        svgPicture[index],
+                        svgPath,
                         width: 40,
                         height: 40,
                       ),
                       Text(
-                        nameSvgPicture[index],
+                        genreName,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.black),
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
                       ),
                     ],
                   ),

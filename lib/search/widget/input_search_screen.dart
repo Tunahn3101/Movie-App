@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
 
 import '../../../themes/theme_provider.dart';
 
 class InputSearchScreen extends StatelessWidget {
-  const InputSearchScreen(
-      {super.key, required this.controller, required this.onSearch});
+  const InputSearchScreen({
+    super.key,
+    required this.controller,
+    required this.onSearch,
+  });
   final TextEditingController controller;
-  final void Function(String) onSearch; // Thêm function callback onSearch
+  final void Function(String) onSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +49,17 @@ class InputSearchScreen extends StatelessWidget {
                   hintStyle: GoogleFonts.roboto(),
                   border: InputBorder.none,
                 ),
+              ),
+            ),
+            const SizedBox(width: 3),
+            InkWell(
+              onTap: () {
+                controller.clear();
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: Icon(
+                IconlyLight.close_square,
+                color: isDarkMode ? Colors.white : Colors.black,
               ),
             )
           ],

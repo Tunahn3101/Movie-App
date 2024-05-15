@@ -169,7 +169,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                   ),
                 ),
                 Positioned(
-                  left: 320,
+                  right: 30,
                   top: 187,
                   child: InkWell(
                     onTap: () {
@@ -249,16 +249,6 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                         Icon(IconlyLight.star),
                         SizedBox(width: 4),
                         Text('Rate'),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Row(
-                      children: [
-                        Icon(IconlyLight.plus),
-                        SizedBox(width: 4),
-                        Text('List'),
                       ],
                     ),
                   ),

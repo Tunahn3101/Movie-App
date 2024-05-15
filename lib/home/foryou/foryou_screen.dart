@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieapp/models/movie_list.dart';
@@ -46,10 +47,11 @@ class _ForYouScreenState extends State<ForYouScreen> {
             return Center(child: Text("Lỗi: ${snapshot.error}"));
           } else if (snapshot.hasData && snapshot.data!.results != null) {
             return GridView.builder(
+              dragStartBehavior: DragStartBehavior.start,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, mainAxisExtent: 320
-                  // Số lượng cột
-                  ),
+                crossAxisCount: 2,
+                mainAxisExtent: 300,
+              ),
               itemCount: snapshot.data!.results!.length,
               itemBuilder: (context, index) {
                 Movie movie = snapshot.data!.results![index];

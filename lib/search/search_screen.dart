@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movieapp/provider/movie_search_provider.dart';
 import 'package:provider/provider.dart';
@@ -50,78 +51,74 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              // Cập nhật InputSearchScreen để xử lý sự kiện nhập văn bản
-              InputSearchScreen(
-                  controller: _searchController, onSearch: _handleSearch),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                height: 700,
-                child: Consumer<MovieSearchProvider>(
-                  builder: (context, provider, _) {
-                    if (_searchController.text.isNotEmpty &&
-                        provider.isSearching) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (_searchController.text.isNotEmpty &&
-                        provider.searchResults != null) {
-                      // Sử dụng GridView.builder thay vì ListView.builder
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // Số cột được hiển thị
-                          mainAxisExtent: 250,
-                        ),
-                        shrinkWrap: true,
-                        itemCount: provider.searchResults!.results!.length,
-                        itemBuilder: (context, index) {
-                          final movie = provider.searchResults!.results![index];
-                          return InkWell(
-                            onTap: () {
-                              movieDetailsProvider
-                                  .fetchMoviesDetails(movie.id!);
-                              nextScreen(context,
-                                  MovieDetailsScreen(movieId: movie.id!));
-                            },
-                            child: Column(
-                              children: [
-                                Container(
-                                  // Điều chỉnh kích thước container để phù hợp với GridView
-                                  width: MediaQuery.of(context).size.width / 2 -
-                                      30, // Lấy chiều rộng của màn hình và chia cho 2 trừ đi khoảng cách
-                                  height: 200, // Đặt chiều cao cố định
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                        movie.posterPath != null
-                                            ? 'https://image.tmdb.org/t/p/w500${movie.posterPath}'
-                                            : '',
-                                      ),
+        child: Column(
+          children: [
+            const SizedBox(height: 50),
+            InputSearchScreen(
+                controller: _searchController, onSearch: _handleSearch),
+            const SizedBox(height: 16),
+            Expanded(
+              child: Consumer<MovieSearchProvider>(
+                builder: (context, provider, _) {
+                  if (_searchController.text.isNotEmpty &&
+                      provider.isSearching) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (_searchController.text.isNotEmpty &&
+                      provider.searchResults != null) {
+                    // Sử dụng GridView.builder thay vì ListView.builder
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // Số cột được hiển thị
+                        mainAxisExtent: 250,
+                      ),
+                      shrinkWrap: true,
+                      itemCount: provider.searchResults!.results!.length,
+                      itemBuilder: (context, index) {
+                        final movie = provider.searchResults!.results![index];
+                        return InkWell(
+                          onTap: () {
+                            movieDetailsProvider.fetchMoviesDetails(movie.id!);
+                            nextScreen(context,
+                                MovieDetailsScreen(movieId: movie.id!));
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                // Điều chỉnh kích thước container để phù hợp với GridView
+                                width: MediaQuery.of(context).size.width / 2 -
+                                    30, // Lấy chiều rộng của màn hình và chia cho 2 trừ đi khoảng cách
+                                height: 200, // Đặt chiều cao cố định
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(
+                                      movie.posterPath != null
+                                          ? 'https://image.tmdb.org/t/p/w500${movie.posterPath}'
+                                          : '',
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  movie.title!,
-                                  textAlign: TextAlign.center,
-                                  maxLines:
-                                      2, // Giới hạn số dòng hiển thị cho tiêu đề
-                                  overflow: TextOverflow
-                                      .ellipsis, // Thêm dấu ba chấm nếu tiêu đề quá dài
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      // Show default widgets when not searching or search results are empty
-                      return const Column(
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                movie.title!,
+                                textAlign: TextAlign.center,
+                                maxLines:
+                                    2, // Giới hạn số dòng hiển thị cho tiêu đề
+                                overflow: TextOverflow
+                                    .ellipsis, // Thêm dấu ba chấm nếu tiêu đề quá dài
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    // Show default widgets when not searching or search results are empty
+                    return const SingleChildScrollView(
+                      child: Column(
                         children: [
                           SliderImage(),
                           SizedBox(height: 16),
@@ -129,13 +126,13 @@ class _SearchScreenState extends State<SearchScreen> {
                           SizedBox(height: 16),
                           TrendingMoviesWeek(),
                         ],
-                      );
-                    }
-                  },
-                ),
+                      ),
+                    );
+                  }
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

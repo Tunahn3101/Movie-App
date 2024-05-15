@@ -116,7 +116,7 @@ class _SliderImageState extends State<SliderImage> {
       onTap: () {},
       child: SizedBox(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height / 4,
+        height: 252,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: PageView.builder(
