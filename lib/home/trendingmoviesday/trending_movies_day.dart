@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:movieapp/common/app_screen_size.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/movie.dart';
@@ -52,7 +53,7 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
               itemBuilder: (context, index) {
                 Movie movie = snapshot.data!.results![index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: AppScreenSize.uiPadding,
                   child: Column(
                     children: [
                       const SizedBox(height: 10),

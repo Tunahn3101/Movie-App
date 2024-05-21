@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:movieapp/common/app_screen_size.dart';
 import 'package:movieapp/models/movie_list.dart';
 import 'package:movieapp/models/movie.dart';
 import 'package:movieapp/moviedetails/movie_details._screen.dart';
@@ -15,8 +16,7 @@ class ForYouScreen extends StatefulWidget {
   const ForYouScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _ForYouScreenState createState() => _ForYouScreenState();
+  State<ForYouScreen> createState() => _ForYouScreenState();
 }
 
 class _ForYouScreenState extends State<ForYouScreen> {
@@ -37,6 +37,11 @@ class _ForYouScreenState extends State<ForYouScreen> {
     MovieDetailsProvider movieDetailsProvider =
         Provider.of<MovieDetailsProvider>(context, listen: false);
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final crossAxisCount = isLandscape ? 3 : 2;
+
     return Scaffold(
       body: FutureBuilder<MoviesList>(
         future: futureMovieList,
@@ -48,15 +53,15 @@ class _ForYouScreenState extends State<ForYouScreen> {
           } else if (snapshot.hasData && snapshot.data!.results != null) {
             return GridView.builder(
               dragStartBehavior: DragStartBehavior.start,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
                 mainAxisExtent: 300,
               ),
               itemCount: snapshot.data!.results!.length,
               itemBuilder: (context, index) {
                 Movie movie = snapshot.data!.results![index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: AppScreenSize.uiPadding,
                   child: Column(
                     children: [
                       const SizedBox(height: 10),
@@ -67,7 +72,8 @@ class _ForYouScreenState extends State<ForYouScreen> {
                               context, MovieDetailsScreen(movieId: movie.id!));
                         },
                         child: Container(
-                          width: 184,
+                          width: screenWidth /
+                              crossAxisCount, // Adjust width based on screen size
                           height: 224,
                           decoration: BoxDecoration(
                             boxShadow: [

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:movieapp/firebase_options.dart';
+import 'package:movieapp/provider/authentication_provider.dart';
 import 'package:movieapp/provider/internet_provider.dart';
 import 'package:movieapp/provider/movie_details_provider.dart';
 import 'package:movieapp/provider/movie_search_provider.dart';
@@ -32,6 +33,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => InternetProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AuthenticationProvider(),
         )
       ],
       child: const MyApp(),

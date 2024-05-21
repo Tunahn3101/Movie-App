@@ -30,32 +30,32 @@ class UISettingList extends StatelessWidget {
           darkMode: true,
         )
       ],
+      // [
+      //   // ActionModel(
+      //   //   title: 'Share app',
+      //   //   icon: AppImage.iscShare,
+      //   //   ontap: () {},
+      //   // ),
+      //   // ActionModel(
+      //   //   title: 'App reviews',
+      //   //   icon: AppImage.icRate,
+      //   //   ontap: () {},
+      //   // ),
+      //   // ActionModel(
+      //   //   title: 'Help',
+      //   //   icon: AppImage.icHelp,
+      //   //   ontap: () {},
+      //   // )
+      // ],
       [
         ActionModel(
-          title: 'Share app',
-          icon: AppImage.iscShare,
-          ontap: () {},
-        ),
-        ActionModel(
-          title: 'App reviews',
-          icon: AppImage.icRate,
-          ontap: () {},
-        ),
-        ActionModel(
-          title: 'Help',
-          icon: AppImage.icHelp,
-          ontap: () {},
-        )
-      ],
-      [
-        ActionModel(
-          title: 'About us',
+          title: 'Contact us',
           icon: AppImage.icAboutUs,
           ontap: () {},
           isMore: true,
         ),
         ActionModel(
-          title: 'Privacy Policy',
+          title: 'Report a problem',
           icon: AppImage.icPrivacyPolicy,
           ontap: () {},
           isMore: true,

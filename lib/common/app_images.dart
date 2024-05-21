@@ -9,4 +9,5 @@ class AppImage {
   static const iscShare = 'assets/images/ic-share.png';
   static const icTermsOfService = 'assets/images/ic-termsOfService.png';
   static const icMore = 'assets/images/ic-more.png';
+  static const icTMDB = 'assets/images/logo_tmdb.png';
 }

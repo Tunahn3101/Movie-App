@@ -33,28 +33,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final sp = context.watch<SignInProvider>();
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              children: [
-                // const SizedBox(height: 68),
-                const UIInfoUserSetting(),
-                const SizedBox(height: 24),
-                const UISettingList(),
-                const SizedBox(height: 20),
-                ActionButton(
-                  onPressed: () {
-                    sp.userSignOut();
-                    nextScreen(context, const LoginScreen());
-                  },
-                  text: 'Logout',
-                  backgroundColor: const Color(0xFFDB515E),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            children: [
+              const SizedBox(height: 68),
+              const UIInfoUserSetting(),
+              const SizedBox(height: 24),
+              const UISettingList(),
+              const SizedBox(height: 20),
+              ActionButton(
+                onPressed: () {
+                  sp.userSignOut();
+                  nextScreen(context, const LoginScreen());
+                },
+                text: 'Logout',
+                backgroundColor: const Color(0xFFDB515E),
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),

@@ -33,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const SizedBox(height: 50),
             const UIInforUser(),
-            const SizedBox(height: 20),
             TabBar(
               labelColor: selectedColor,
               unselectedLabelColor: unselectedColor,

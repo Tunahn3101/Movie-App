@@ -4,21 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
-import 'package:movieapp/moviedetails/info/info_screen.dart';
-import 'package:movieapp/moviedetails/casts/casts_screen.dart';
-import 'package:movieapp/moviedetails/reviews/reviews_screen.dart';
-import 'package:movieapp/moviedetails/trailermovie/trailer_movie.dart';
-import 'package:movieapp/utils/back_screen.dart';
-import 'package:movieapp/utils/next_screen.dart';
+import 'package:movieapp/common/app_images.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/authentication_provider.dart';
 import '../provider/movie_details_provider.dart';
 import '../themes/theme_provider.dart';
+import '../utils/back_screen.dart';
+import '../utils/next_screen.dart';
+
+import 'casts/casts_screen.dart';
+import 'info/info_screen.dart';
+import 'reviews/reviews_screen.dart';
+import 'trailermovie/trailer_movie.dart';
+import 'ui_webview.dart';
 
 class MovieDetailsScreen extends StatefulWidget {
   final int movieId;
 
-  const MovieDetailsScreen({super.key, required this.movieId});
+  const MovieDetailsScreen({
+    super.key,
+    required this.movieId,
+  });
 
   @override
   State<MovieDetailsScreen> createState() => _MovieDetailsScreenState();
@@ -26,6 +33,82 @@ class MovieDetailsScreen extends StatefulWidget {
 
 class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
   int selectedSegmentIndex = 0;
+  late int movieId;
+
+  @override
+  void initState() {
+    super.initState();
+    movieId = widget.movieId;
+    print(movieId);
+  }
+
+  void handleSaveMovie(BuildContext context, int movieId) async {
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+
+    if (authProvider.sessionID.isNotEmpty) {
+      print("Lưu phim với Session ID: ${authProvider.sessionID}");
+      try {
+        await authProvider.addMovieToList(8301129, movieId);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Phim đã được thêm thành công'),
+          ),
+        );
+      } catch (e) {
+        print("Error: $e");
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Yêu cầu xác thực",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(height: 4),
+                  Image.asset(
+                    AppImage.icTMDB,
+                    width: 100,
+                    height: 100,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text("Hãy đăng nhập vào TMDB để xác thực."),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        child: const Text("Đăng nhập"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          nextScreen(context, const UIWebView());
+                        },
+                      ),
+                      TextButton(
+                        child: const Text("Hủy"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
   String formatRuntime(int? runtime) {
     if (runtime == null) {
       return 'Unknow';
@@ -50,11 +133,9 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
       body: Consumer<MovieDetailsProvider>(builder: (context, provider, child) {
         final movieDetails = provider.movieDetails;
 
-        // Khi dữ liệu chi tiết phim đang được tải
         if (movieDetails == null) {
           return const Center(child: CircularProgressIndicator());
         }
-
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -233,7 +314,9 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      handleSaveMovie(context, movieId);
+                    },
                     child: const Row(
                       children: [
                         Icon(IconlyLight.bookmark),

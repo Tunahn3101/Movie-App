@@ -18,6 +18,16 @@ class MoviesApi {
   Dio dio = Dio(options);
   static const String apiKey = movieDbKey;
 
+  dynamic _handleResponse(Response response) {
+    if (response.statusCode == 200) {
+      // OK
+      return response.data;
+    } else {
+      // Lỗi từ phía server
+      throw Exception('Lỗi từ server: ${response.statusCode}');
+    }
+  }
+
   Future<MoviesList> getPopularMovies({
     String language = 'en-US',
     int page = 1,
@@ -27,7 +37,14 @@ class MoviesApi {
       var response = await dio.get(
         '/3/movie/popular',
       );
-      return MoviesList.fromJson(response.data);
+      var data = _handleResponse(response);
+      return MoviesList.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -42,7 +59,15 @@ class MoviesApi {
       var response = await dio.get(
         '/3/movie/top_rated',
       );
-      return MoviesList.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return MoviesList.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -57,7 +82,15 @@ class MoviesApi {
       var response = await dio.get(
         '/3/movie/upcoming',
       );
-      return MoviesList.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return MoviesList.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -85,7 +118,15 @@ class MoviesApi {
           "primary_release_year": primaryReleaseYear,
         },
       );
-      return MoviesList.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return MoviesList.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -105,7 +146,15 @@ class MoviesApi {
           "region": region,
         },
       );
-      return MoviesList.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return MoviesList.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -118,7 +167,15 @@ class MoviesApi {
       var response = await dio.get(
         '/3/movie/$movieId/credits',
       );
-      return CastList.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return CastList.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -137,7 +194,15 @@ class MoviesApi {
           "append_to_response": appendToResponse,
         },
       );
-      return MovieDetailsModel.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return MovieDetailsModel.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -148,7 +213,15 @@ class MoviesApi {
       var response = await dio.get(
         '/3/movie/$movieId/reviews',
       );
-      return MovieReviews.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return MovieReviews.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -165,7 +238,15 @@ class MoviesApi {
           "language": language,
         },
       );
-      return MoviesList.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return MoviesList.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
@@ -182,9 +263,21 @@ class MoviesApi {
           "language": language,
         },
       );
-      return MoviesList.fromJson(response.data);
+      var data = _handleResponse(response);
+
+      return MoviesList.fromJson(data);
+    } on DioException catch (e) {
+      // Lỗi từ phía server hoặc lỗi network
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
     } on Exception {
       rethrow;
     }
   }
+
+  get(String s) {}
+
+  post(String s, {required Map<String, String> data}) {}
 }

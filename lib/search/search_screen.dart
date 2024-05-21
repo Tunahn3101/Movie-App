@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movieapp/provider/movie_search_provider.dart';
 import 'package:provider/provider.dart';
