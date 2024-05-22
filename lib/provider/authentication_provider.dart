@@ -41,26 +41,26 @@ class AuthenticationProvider with ChangeNotifier {
   }
 
   // Tạo danh sách mới
-  Future<int> createList(String name, String description) async {
-    try {
-      Response response = await dio.post(
-        '/3/list',
-        data: {
-          'name': name,
-          'description': description,
-          'language': 'en',
-        },
-        queryParameters: {
-          'session_id': _sessionID,
-        },
-      );
-      int listId = response.data['id'];
-      return listId;
-    } catch (e) {
-      // print('Error creating list: $e');
-      rethrow;
-    }
-  }
+  // Future<int> createList(String name, String description) async {
+  //   try {
+  //     Response response = await dio.post(
+  //       '/3/list',
+  //       data: {
+  //         'name': name,
+  //         'description': description,
+  //         'language': 'en',
+  //       },
+  //       queryParameters: {
+  //         'session_id': _sessionID,
+  //       },
+  //     );
+  //     int listId = response.data['id'];
+  //     return listId;
+  //   } catch (e) {
+  //     // print('Error creating list: $e');
+  //     rethrow;
+  //   }
+  // }
 
   // Thêm phim vào danh sách
   Future<void> addMovieToList(int listId, int? movieId) async {
@@ -79,4 +79,22 @@ class AuthenticationProvider with ChangeNotifier {
       rethrow;
     }
   }
+
+  // Kiểm tra xem phim có tồn tại trong danh sách không
+  Future<bool> getCheckItemStatus(int listId, int movieId) async {
+    try {
+      Response response = await dio.get(
+        '/3/list/$listId/item_status',
+        queryParameters: {
+          'session_id': _sessionID,
+          'movie_id': movieId,
+        },
+      );
+      return response.data['item_present'] ?? false;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Lấy những bộ phim trong danh sách
 }

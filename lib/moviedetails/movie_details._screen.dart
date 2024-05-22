@@ -49,15 +49,29 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     if (authProvider.sessionID.isNotEmpty) {
       print("Lưu phim với Session ID: ${authProvider.sessionID}");
       try {
-        await authProvider.addMovieToList(8301129, movieId);
-
+        bool isMovieExists =
+            await authProvider.getCheckItemStatus(8301129, movieId);
+        if (isMovieExists) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Phim đã có trong danh sách'),
+            ),
+          );
+        } else {
+          await authProvider.addMovieToList(8301129, movieId);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Phim đã được thêm vào danh sách thành công'),
+            ),
+          );
+        }
+      } catch (e) {
+        print('Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Phim đã được thêm thành công'),
+            content: Text('Có lỗi xảy ra vui lòng thử lại'),
           ),
         );
-      } catch (e) {
-        print("Error: $e");
       }
     } else {
       showDialog(
