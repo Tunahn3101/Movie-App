@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:movieapp/models/details_movie_to_list.dart';
 import 'package:movieapp/models/reviews.dart';
 
 import '../models/cast.dart';
@@ -277,7 +278,29 @@ class MoviesApi {
     }
   }
 
-  get(String s) {}
-
-  post(String s, {required Map<String, String> data}) {}
+  // Lấy những bộ phim trong danh sách
+  Future<DetailsMovieToList> getDetailsMovieToList(
+    int listId, {
+    String language = 'en-US',
+    int page = 1,
+  }) async {
+    try {
+      var response = await dio.get(
+        '/3/list/$listId',
+        queryParameters: {
+          'language': language,
+          'page': page,
+        },
+      );
+      var data = _handleResponse(response);
+      return DetailsMovieToList.fromJson(data);
+    } on DioException catch (e) {
+      var message = e.response != null
+          ? 'Lỗi từ server: ${e.response?.statusCode}'
+          : 'Lỗi kết nối mạng.';
+      throw Exception(message);
+    } on Exception {
+      rethrow;
+    }
+  }
 }

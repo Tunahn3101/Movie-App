@@ -96,5 +96,21 @@ class AuthenticationProvider with ChangeNotifier {
     }
   }
 
-  // Lấy những bộ phim trong danh sách
+  // Xóa phim khỏi danh sách
+  Future<void> removeMovieFromList(int listId, int movieId) async {
+    try {
+      await dio.post(
+        '/3/list/$listId/remove_item',
+        data: {
+          'media_id': movieId,
+        },
+        queryParameters: {
+          'session_id': sessionID,
+        },
+      );
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
