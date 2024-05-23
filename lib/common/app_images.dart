@@ -10,4 +10,5 @@ class AppImage {
   static const icTermsOfService = 'assets/images/ic-termsOfService.png';
   static const icMore = 'assets/images/ic-more.png';
   static const icTMDB = 'assets/images/logo_tmdb.png';
+  static const icEdit = 'assets/images/ic-edit.png';
 }

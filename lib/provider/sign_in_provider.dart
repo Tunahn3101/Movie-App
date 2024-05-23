@@ -36,6 +36,15 @@ class SignInProvider extends ChangeNotifier {
   String? _imageUrl;
   String? get imageUrl => _imageUrl;
 
+  String? _gender;
+  String? get gender => _gender;
+
+  String? _dateOfBirth;
+  String? get dateOfBirth => _dateOfBirth;
+
+  String? _countries;
+  String? get countries => _countries;
+
   SignInProvider() {
     checkSignInUser();
   }
@@ -70,6 +79,9 @@ class SignInProvider extends ChangeNotifier {
             "https://cdn1.iconfinder.com/data/icons/round2-set/25/Profile_ic-512.png";
         _provider = "EMAIL";
         _uid = userDetails.uid;
+        _gender = "";
+        _dateOfBirth = "";
+        _countries = "";
         notifyListeners();
       }
     } on FirebaseAuthException catch (e) {
@@ -107,6 +119,9 @@ class SignInProvider extends ChangeNotifier {
         _imageUrl = userDetails.photoURL;
         _provider = "GOOGLE";
         _uid = userDetails.uid;
+        _gender = "";
+        _dateOfBirth = "";
+        _countries = "";
         notifyListeners();
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
@@ -194,6 +209,9 @@ class SignInProvider extends ChangeNotifier {
               _email = snapshot['email'],
               _imageUrl = snapshot['image_url'],
               _provider = snapshot['provider'],
+              _gender = snapshot['gender'],
+              _dateOfBirth = snapshot['date_of_birth'],
+              _countries = snapshot['countries'],
             });
   }
 
@@ -206,6 +224,9 @@ class SignInProvider extends ChangeNotifier {
       "uid": _uid,
       "image_url": _imageUrl,
       "provider": _provider,
+      "gender": _gender,
+      "date_of_birth": _dateOfBirth,
+      "countries": _countries,
     });
     notifyListeners();
   }
@@ -217,6 +238,9 @@ class SignInProvider extends ChangeNotifier {
     await s.setString('uid', _uid!);
     await s.setString('image_url', _imageUrl!);
     await s.setString('provider', _provider!);
+    await s.setString('gender', _gender!);
+    await s.setString('date_of_birth', dateOfBirth!);
+    await s.setString('countries', countries!);
     notifyListeners();
   }
 
@@ -227,6 +251,9 @@ class SignInProvider extends ChangeNotifier {
     _imageUrl = s.getString('image_url');
     _uid = s.getString('uid');
     _provider = s.getString('provider');
+    _gender = s.getString('gender');
+    _dateOfBirth = s.getString('date_of_birth');
+    _countries = s.getString('countries');
     notifyListeners();
   }
 

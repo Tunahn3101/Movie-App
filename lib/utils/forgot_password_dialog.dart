@@ -59,7 +59,6 @@ class ForgotPasswordDialog extends StatelessWidget {
                   height: 10,
                 ),
                 const Divider(
-                  thickness: 1,
                   color: Color(0xFFD3D3D3),
                 ),
                 IntrinsicHeight(
@@ -77,10 +76,7 @@ class ForgotPasswordDialog extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const VerticalDivider(
-                        color: Color(0xFFECEEED),
-                        thickness: 2,
-                      ),
+                      const VerticalDivider(color: Colors.grey),
                       GestureDetector(
                         onTap: () {},
                         child: const Text(

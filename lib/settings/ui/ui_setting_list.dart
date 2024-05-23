@@ -3,6 +3,9 @@ import 'package:movieapp/common/app_images.dart';
 import 'package:movieapp/extension/extension_core.dart';
 import 'package:movieapp/settings/action_model.dart';
 import 'package:movieapp/settings/ui/ui_section_container.dart';
+import 'package:movieapp/utils/next_screen.dart';
+
+import '../personal_information/personal_information.dart';
 
 class UISettingList extends StatelessWidget {
   const UISettingList({super.key});
@@ -14,7 +17,9 @@ class UISettingList extends StatelessWidget {
         ActionModel(
           title: 'Personal information',
           icon: AppImage.icProfile,
-          ontap: () {},
+          ontap: () {
+            nextScreen(context, const PersonalInformationScreen());
+          },
           isMore: true,
         ),
         ActionModel(

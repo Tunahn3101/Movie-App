@@ -156,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       height: 16,
                     ),
                     Text(
-                      'Connect with your family today!',
+                      'Connect to watch hot movies today!',
                       style: GoogleFonts.sansitaSwashed(
                         textStyle: const TextStyle(
                           color: Color(0xFF202A2E),

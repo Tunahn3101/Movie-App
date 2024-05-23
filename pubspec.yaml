@@ -54,6 +54,8 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   webview_flutter: ^4.7.0
   flutter_slidable: ^3.1.0
+  image_picker: ^1.1.1
+  dropdown_button2: ^2.3.9
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -88,6 +90,7 @@ flutter:
     - assets/color_cinema_icons/
     - assets/images/
     - assets/icon/
+    - assets/countries.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
