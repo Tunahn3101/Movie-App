@@ -257,6 +257,50 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateUserData({
+    required String name,
+    required String gender,
+    required String dateOfBirth,
+    required String country,
+    String? imageUrl,
+  }) async {
+    try {
+      final DocumentReference userDoc =
+          FirebaseFirestore.instance.collection('users').doc(_uid);
+
+      // Cập nhật thông tin người dùng trong Firestore
+      await userDoc.update({
+        'name': name,
+        'gender': gender,
+        'date_of_birth': dateOfBirth,
+        'countries': country,
+        if (imageUrl != null) 'image_url': imageUrl,
+      });
+
+      // Cập nhật thông tin trong SharedPreferences
+      final SharedPreferences s = await SharedPreferences.getInstance();
+      await s.setString('name', name);
+      await s.setString('gender', gender);
+      await s.setString('date_of_birth', dateOfBirth);
+      await s.setString('countries', country);
+      if (imageUrl != null) await s.setString('image_url', imageUrl);
+
+      // Cập nhật state của provider
+      _name = name;
+      _gender = gender;
+      _dateOfBirth = dateOfBirth;
+      _countries = country;
+      if (imageUrl != null) _imageUrl = imageUrl;
+
+      notifyListeners();
+    } catch (e) {
+      print('Error updating user data: $e');
+      _hasError = true;
+      _errorCode = e.toString();
+      notifyListeners();
+    }
+  }
+
   // checkUser exists or not in cloudfirestore
   Future<bool> checkUserExists() async {
     DocumentSnapshot snap =

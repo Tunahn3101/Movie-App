@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -101,10 +102,9 @@ class _CountryRegionState extends State<CountryRegion> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        GestureDetector(
-                          child: Text(
+                        ListTile(
+                          title: Text(
                             country['name'],
                             style: TextStyle(
                               fontFamily: "SF Pro Display",
@@ -114,6 +114,10 @@ class _CountryRegionState extends State<CountryRegion> {
                                   isSelected ? const Color(0xFFFF8311) : null,
                             ),
                           ),
+                          trailing: isSelected
+                              ? const Icon(Icons.check,
+                                  color: Color(0xFFFF8311))
+                              : null,
                           onTap: () {
                             setState(() {
                               // Nếu quốc gia đã được chọn, bỏ chọn nó
@@ -130,6 +134,7 @@ class _CountryRegionState extends State<CountryRegion> {
                         const Divider(
                           color: Colors.grey,
                           thickness: 1,
+                          height: 1,
                         ),
                       ],
                     ),

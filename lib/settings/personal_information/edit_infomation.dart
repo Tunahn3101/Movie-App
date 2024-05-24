@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,23 +11,22 @@ import 'package:provider/provider.dart';
 
 import '../../provider/sign_in_provider.dart';
 import '../../utils/button_action.dart';
-import '../../utils/personal_information_input.dart';
-import '../edit_input_country_region.dart';
 import 'country_region.dart';
 
-class EditInformationn extends StatefulWidget {
-  const EditInformationn({super.key});
+class EditInformation extends StatefulWidget {
+  const EditInformation({super.key});
 
   @override
-  State<EditInformationn> createState() => _EditInformationnState();
+  State<EditInformation> createState() => _EditInformationState();
 }
 
-class _EditInformationnState extends State<EditInformationn> {
+class _EditInformationState extends State<EditInformation> {
   String? selectedGender;
   List<String> genderOptions = ['Male', 'Female', 'Other'];
   DateTime? selectedDate;
-  String? _selectedCountry; // Khai báo biến _selectedCountry ở đây
+  String? _selectedCountry;
   File? selectedImage;
+  TextEditingController namecontroller = TextEditingController();
 
   Future getData() async {
     final sp = context.read<SignInProvider>();
@@ -98,6 +98,50 @@ class _EditInformationnState extends State<EditInformationn> {
     );
   }
 
+  Future<void> _saveInformation() async {
+    final sp = context.read<SignInProvider>();
+
+    String? imageUrl;
+    if (selectedImage != null) {
+      // Upload the selected image to Firebase Storage and get the download URL
+      imageUrl = await uploadImageToFirebaseStorage(selectedImage!, sp.uid!);
+    }
+
+    await sp.updateUserData(
+      name: namecontroller.text.isNotEmpty ? namecontroller.text : sp.name!,
+      gender: selectedGender ?? sp.gender ?? '',
+      dateOfBirth: selectedDate != null
+          ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
+          : sp.dateOfBirth ?? '',
+      country: _selectedCountry ?? sp.countries ?? '',
+      imageUrl: imageUrl,
+    );
+
+    if (!sp.hasError) {
+      // Show success message or navigate back
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Information updated successfully')),
+      );
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating information: ${sp.errorCode}')),
+      );
+    }
+  }
+
+  Future<String> uploadImageToFirebaseStorage(
+      File imageFile, String uid) async {
+    try {
+      Reference ref = FirebaseStorage.instance.ref().child('avatars/$uid.jpg');
+      await ref.putFile(imageFile);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      print('Error uploading image to Firebase Storage: $e');
+      return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final sp = context.read<SignInProvider>();
@@ -124,63 +168,106 @@ class _EditInformationnState extends State<EditInformationn> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 103),
-                child: Stack(children: [
-                  Container(
-                    width: 160,
-                    height: 160,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: const Color(0xFFFF8311), width: 2)),
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage("${sp.imageUrl}"),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    right: 4,
-                    child: GestureDetector(
-                      onTap: () {
-                        optionPickImage(context);
-                      },
-                      child: Image.asset(AppImage.icEdit),
-                    ),
-                  )
-                ]),
+                child: Stack(
+                  children: [
+                    Container(
+                        width: 160,
+                        height: 160,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: const Color(0xFFFF8311), width: 2)),
+                        child: selectedImage != null
+                            ? CircleAvatar(
+                                backgroundImage: FileImage(selectedImage!))
+                            : CircleAvatar(
+                                backgroundImage: NetworkImage("${sp.imageUrl}"),
+                              )),
+                    Positioned(
+                      bottom: 10,
+                      right: 4,
+                      child: GestureDetector(
+                        onTap: () {
+                          optionPickImage(context);
+                        },
+                        child: Image.asset(AppImage.icEdit),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Name',
+                style: TextStyle(
+                  fontFamily: 'SF Pro Display',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
               ),
               const SizedBox(
-                height: 20,
+                height: 8,
               ),
-              PersonalInformationInput(
-                titleText: 'Name',
-                hintText: "${sp.name}",
-                enabled: true,
+              TextFormField(
+                controller: namecontroller,
                 keyboardType: TextInputType.name,
+                enabled: true,
+                decoration: InputDecoration(
+                  hintText: '${sp.name}',
+                  hintStyle: const TextStyle(
+                      fontFamily: 'SF Pro Display',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      color: Color(0xFF303C41)),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFFECEEED)),
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFFF9F9F9),
+                ),
               ),
-              const SizedBox(
-                height: 12,
+              const SizedBox(height: 12),
+              const Text(
+                'Email',
+                style: TextStyle(
+                  fontFamily: 'SF Pro Display',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
               ),
-              PersonalInformationInput(
-                titleText: 'Email',
-                hintText: "${sp.email}",
+              const SizedBox(height: 8),
+              TextFormField(
                 enabled: false,
-                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  hintText: '${sp.email}',
+                  hintStyle: const TextStyle(
+                      fontFamily: 'SF Pro Display',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      color: Color(0xFF303C41)),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFFECEEED)),
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFFF9F9F9),
+                ),
               ),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
               const Text(
                 'Gender',
                 style: TextStyle(
                   fontFamily: 'SF Pro Display',
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
-                  color: Color(0xFF909090),
                 ),
               ),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               SizedBox(
                 height: 48,
                 child: DropdownButtonFormField2<String>(
@@ -210,7 +297,7 @@ class _EditInformationnState extends State<EditInformationn> {
                           ))
                       .toList(),
                   onChanged: (value) {
-                    //Do something when selected item is changed.
+                    selectedGender = value.toString();
                   },
                   onSaved: (value) {
                     selectedGender = value.toString();
@@ -235,16 +322,13 @@ class _EditInformationnState extends State<EditInformationn> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
               const Text(
                 'Date of birth',
                 style: TextStyle(
                   fontFamily: 'SF Pro Display',
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
-                  color: Color(0xFF909090),
                 ),
               ),
               const SizedBox(height: 8),
@@ -298,37 +382,60 @@ class _EditInformationnState extends State<EditInformationn> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
               GestureDetector(
-                onTap: () async {
-                  // Mở trang CountryRegion và nhận dữ liệu trả về
-                  final selectedCountry = await Navigator.push(
+                  onTap: () async {
+                    final selectedCountry = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const CountryRegion()));
-
-                  // Cập nhật giá trị cho phần Country/Region
-                  if (selectedCountry != null) {
-                    setState(() {
-                      _selectedCountry = selectedCountry;
-                    });
-                  }
-                },
-                child: EditInputCountryRegion(
-                  titleText: 'Country/Region',
-                  hintText: _selectedCountry ?? "Select Country",
-                  enabled: false,
-                  keyboardType: TextInputType.text,
-                  suffixIcon: Image.asset(AppImage.icMore),
-                ),
-              ),
+                        builder: (context) => const CountryRegion(),
+                      ),
+                    );
+                    // Cập nhật giá trị cho phần Country/Region
+                    if (selectedCountry != null) {
+                      setState(() {
+                        _selectedCountry = selectedCountry;
+                      });
+                    }
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Country/Region',
+                        style: TextStyle(
+                          fontFamily: 'SF Pro Display',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                          enabled: false,
+                          decoration: InputDecoration(
+                              hintText: _selectedCountry ?? "Select Country",
+                              hintStyle: const TextStyle(
+                                  fontFamily: 'SF Pro Display',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                  color: Color(0xFF303C41)),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 14, horizontal: 16),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide:
+                                    const BorderSide(color: Color(0xFFECEEED)),
+                              ),
+                              filled: true,
+                              fillColor: const Color(0xFFF9F9F9),
+                              suffixIcon: Image.asset(AppImage.icMore))),
+                    ],
+                  )),
               const SizedBox(
                 height: 24,
               ),
               ActionButton(
-                onPressed: () {},
+                onPressed: _saveInformation,
                 text: 'Save',
                 backgroundColor: const Color(0xFFFF8311),
               ),

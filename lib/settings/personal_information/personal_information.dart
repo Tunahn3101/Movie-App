@@ -72,7 +72,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
               const SizedBox(height: 24),
               ActionButton(
                 onPressed: () {
-                  nextScreen(context, const EditInformationn());
+                  nextScreen(context, const EditInformation());
                 },
                 text: 'Edit',
                 backgroundColor: const Color(0xFFFF8311),
