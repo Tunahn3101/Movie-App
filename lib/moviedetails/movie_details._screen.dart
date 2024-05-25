@@ -1,6 +1,8 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +41,11 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
   void initState() {
     super.initState();
     movieId = widget.movieId;
-    print(movieId);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void handleSaveMovie(BuildContext context, int movieId) async {
@@ -150,17 +156,14 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
         if (movieDetails == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                const SizedBox(
-                  width: double.infinity,
-                  height: 384,
-                ),
-                Positioned(
-                  child: ClipRRect(
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  const SizedBox(width: double.infinity, height: 384),
+                  ClipRRect(
                     borderRadius: BorderRadius.circular(5),
                     child: Image.network(
                       'https://image.tmdb.org/t/p/w500/${movieDetails.backdropPath}',
@@ -169,28 +172,25 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 10,
-                  top: 50,
-                  child: InkWell(
-                    onTap: () {
-                      backScreen(context);
-                    },
-                    child: Container(
-                      height: 34,
-                      width: 34,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                          ),
-                        ],
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  Container(
+                    height: 34,
+                    width: 34,
+                    margin: const EdgeInsets.only(left: 10, top: 50),
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                        ),
+                      ],
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        backScreen(context);
+                      },
                       child: const Icon(
                         IconlyBroken.arrow_left_square,
                         size: 24,
@@ -198,26 +198,22 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 20,
-                  top: 187,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10), // Bo tròn ở đây
-                    child: Image.network(
-                      'https://image.tmdb.org/t/p/w500/${movieDetails.posterPath}',
-                      width: 144,
-                      height: 197,
-                      fit: BoxFit.cover, // Để ảnh phủ kín và không bị méo
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, top: 187),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10), // Bo tròn ở đây
+                      child: Image.network(
+                        'https://image.tmdb.org/t/p/w500/${movieDetails.posterPath}',
+                        width: 144,
+                        height: 197,
+                        fit: BoxFit.cover, // Để ảnh phủ kín và không bị méo
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 266,
-                  left: 174,
-                  child: SizedBox(
+                  Container(
                     height: 58,
                     width: 202,
+                    margin: const EdgeInsets.only(top: 266, left: 174),
                     child: Text(
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -230,29 +226,10 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 326,
-                  left: 174,
-                  child: SizedBox(
-                      width: 207,
-                      height: 28,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Chuyển đổi ra tháng-năm
-                          Text(DateFormat.yMMMd().format(
-                              DateTime.parse('${movieDetails.releaseDate}'))),
-                          Text(formatRuntime(movieDetails.runtime)),
-                        ],
-                      )),
-                ),
-                Positioned(
-                  top: 356,
-                  left: 174,
-                  child: SizedBox(
+                  Container(
                     height: 20,
                     width: 207,
+                    margin: const EdgeInsets.only(top: 356, left: 174),
                     child: Row(
                       children: [
                         Image.asset('assets/images/imdb.png'),
@@ -262,14 +239,22 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       ],
                     ),
                   ),
-                ),
-                Positioned(
-                  right: 30,
-                  top: 187,
-                  child: InkWell(
-                    onTap: () {
-                      nextScreen(context, const TrailerMovie());
-                    },
+                  Container(
+                      width: 207,
+                      height: 28,
+                      margin: const EdgeInsets.only(top: 326, left: 174),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Chuyển đổi ra tháng-năm
+                          Text(DateFormat.yMMMd().format(
+                              DateTime.parse('${movieDetails.releaseDate}'))),
+                          Text(formatRuntime(movieDetails.runtime)),
+                        ],
+                      )),
+                  Positioned(
+                    right: 30,
+                    top: 187,
                     child: Container(
                       height: 45,
                       width: 45,
@@ -284,78 +269,88 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                         color: const Color(0xFFff7652),
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      child: const Icon(
-                        IconlyBroken.play,
-                        size: 30,
-                        color: Colors.white,
+                      child: InkWell(
+                        onTap: () {
+                          nextScreen(context, const TrailerMovie());
+                        },
+                        child: const Icon(
+                          IconlyBroken.play,
+                          size: 30,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SizedBox(
-                width: double.infinity,
-                child: Consumer<MovieDetailsProvider>(
-                  builder: (context, provider, child) {
-                    final genres = provider.movieDetails?.genres ?? [];
-                    if (genres.isEmpty) {
-                      return Container();
-                    }
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: genres
-                            .map((genre) => Padding(
-                                  padding: const EdgeInsets.only(right: 4),
-                                  child: Chip(
-                                      label: Text(genre.name ?? 'Unknows')),
-                                ))
-                            .toList(),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      handleSaveMovie(context, movieId);
-                    },
-                    child: const Row(
-                      children: [
-                        Icon(IconlyLight.bookmark),
-                        SizedBox(width: 4),
-                        Text('Save'),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Row(
-                      children: [
-                        Icon(IconlyLight.star),
-                        SizedBox(width: 4),
-                        Text('Rate'),
-                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Container(
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Consumer<MovieDetailsProvider>(
+                    builder: (context, provider, child) {
+                      final genres = provider.movieDetails?.genres ?? [];
+                      if (genres.isEmpty) {
+                        return Container();
+                      }
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: genres
+                              .map((genre) => Padding(
+                                    padding: const EdgeInsets.only(right: 4),
+                                    child: Chip(
+                                        label: Text(genre.name ?? 'Unknows')),
+                                  ))
+                              .toList(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        handleSaveMovie(context, movieId);
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(
+                            IconlyLight.category,
+                            size: 20,
+                          ),
+                          SizedBox(width: 4),
+                          Text('Add List'),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Row(
+                        children: [
+                          Icon(
+                            IconlyLight.star,
+                            size: 20,
+                          ),
+                          SizedBox(width: 4),
+                          Text('Rate'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
                 width: double.infinity,
+                height: 430,
                 decoration: BoxDecoration(
                   color: selectedColor,
                   borderRadius: const BorderRadius.only(
@@ -424,9 +419,9 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                     ),
                   ],
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         );
       }),
     );

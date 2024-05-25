@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 class CountryRegion extends StatefulWidget {
   const CountryRegion({super.key});
@@ -36,7 +34,7 @@ class _CountryRegionState extends State<CountryRegion> {
         _filteredCountries = List.from(_countries);
       });
     } catch (error) {
-      print("Error reading JSON file: $error");
+      rethrow;
     }
   }
 

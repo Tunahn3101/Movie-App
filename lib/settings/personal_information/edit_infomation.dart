@@ -39,16 +39,6 @@ class _EditInformationState extends State<EditInformation> {
     getData();
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
-    if (pickedFile == null) return;
-    setState(() {
-      selectedImage = File(pickedFile.path);
-    });
-    Navigator.of(context).pop();
-  }
-
   void optionPickImage(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: Colors.grey,
@@ -98,13 +88,36 @@ class _EditInformationState extends State<EditInformation> {
     );
   }
 
-  Future<void> _saveInformation() async {
-    final sp = context.read<SignInProvider>();
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile == null) return;
 
+    File imageFile = File(pickedFile.path);
+
+    setState(() {
+      selectedImage = imageFile;
+    });
+
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _saveInformation() async {
+    // Hiển thị dialog loading
+    showLoadingDialog(context, "Saving...");
+
+    final sp = context.read<SignInProvider>();
     String? imageUrl;
+
     if (selectedImage != null) {
-      // Upload the selected image to Firebase Storage and get the download URL
-      imageUrl = await uploadImageToFirebaseStorage(selectedImage!, sp.uid!);
+      final imageName = '${DateTime.now().microsecondsSinceEpoch}.png';
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child('users/$imageName');
+      UploadTask uploadTask = storageReference.putFile(selectedImage!);
+
+      await uploadTask.whenComplete(() async {
+        imageUrl = await storageReference.getDownloadURL();
+      });
     }
 
     await sp.updateUserData(
@@ -117,29 +130,38 @@ class _EditInformationState extends State<EditInformation> {
       imageUrl: imageUrl,
     );
 
+    Navigator.of(context).pop(); // Đóng dialog loading sau khi lưu thông tin
+
     if (!sp.hasError) {
-      // Show success message or navigate back
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Information updated successfully')),
       );
+      Navigator.pop(context);
     } else {
-      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error updating information: ${sp.errorCode}')),
       );
     }
   }
 
-  Future<String> uploadImageToFirebaseStorage(
-      File imageFile, String uid) async {
-    try {
-      Reference ref = FirebaseStorage.instance.ref().child('avatars/$uid.jpg');
-      await ref.putFile(imageFile);
-      return await ref.getDownloadURL();
-    } catch (e) {
-      print('Error uploading image to Firebase Storage: $e');
-      return '';
-    }
+  void showLoadingDialog(BuildContext context, String text) {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Người dùng không thể tắt dialog bằng cách nhấn ngoài
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 10),
+              Text(text),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -166,8 +188,7 @@ class _EditInformationState extends State<EditInformation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 103),
+              Center(
                 child: Stack(
                   children: [
                     Container(
@@ -281,9 +302,9 @@ class _EditInformationState extends State<EditInformation> {
                     ),
                     // Add more decoration..
                   ),
-                  hint: const Text(
-                    'Select Your Gender',
-                    style: TextStyle(fontSize: 14),
+                  hint: Text(
+                    '${sp.gender}' ?? 'Select Your Gender',
+                    style: const TextStyle(fontSize: 14),
                   ),
                   items: genderOptions
                       .map((item) => DropdownMenuItem<String>(
@@ -356,7 +377,7 @@ class _EditInformationState extends State<EditInformation> {
                             : "",
                       ),
                       decoration: InputDecoration(
-                        hintText: "Select date",
+                        hintText: '${sp.dateOfBirth}' ?? "Select date",
                         hintStyle: const TextStyle(
                             fontFamily: 'SF Pro Display',
                             fontWeight: FontWeight.w500,
@@ -439,9 +460,7 @@ class _EditInformationState extends State<EditInformation> {
                 text: 'Save',
                 backgroundColor: const Color(0xFFFF8311),
               ),
-              const SizedBox(
-                height: 124,
-              )
+              const SizedBox(height: 90)
             ],
           ),
         ),

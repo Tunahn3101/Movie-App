@@ -51,8 +51,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 103),
+              Center(
                 child: Container(
                     width: 160,
                     height: 160,

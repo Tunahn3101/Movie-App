@@ -28,6 +28,13 @@ class _ForYouScreenState extends State<ForYouScreen> {
     futureMovieList = api.getPopularMovies();
   }
 
+  Future<void> _refreshMovies() async {
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      futureMovieList = api.getPopularMovies();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
@@ -51,63 +58,66 @@ class _ForYouScreenState extends State<ForYouScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text("Lỗi: ${snapshot.error}"));
           } else if (snapshot.hasData && snapshot.data!.results != null) {
-            return GridView.builder(
-              dragStartBehavior: DragStartBehavior.start,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                mainAxisExtent: 300,
-              ),
-              itemCount: snapshot.data!.results!.length,
-              itemBuilder: (context, index) {
-                Movie movie = snapshot.data!.results![index];
-                return Padding(
-                  padding: AppScreenSize.uiPadding,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: () {
-                          movieDetailsProvider.fetchMoviesDetails(movie.id!);
-                          nextScreen(
-                              context, MovieDetailsScreen(movieId: movie.id!));
-                        },
-                        child: Container(
-                          width: screenWidth /
-                              crossAxisCount, // Adjust width based on screen size
-                          height: 224,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: selectedColor,
-                                blurRadius: 1, // Chỉnh sửa độ mờ của bóng
-                                offset: const Offset(
-                                    4, 4), // Thay đổi vị trí của bóng
-                              ),
-                            ],
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              fit: BoxFit.cover, // Đảm bảo ảnh được phủ kín
-                              image: NetworkImage(
-                                'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+            return RefreshIndicator(
+              onRefresh: _refreshMovies,
+              child: GridView.builder(
+                dragStartBehavior: DragStartBehavior.start,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  mainAxisExtent: 300,
+                ),
+                itemCount: snapshot.data!.results!.length,
+                itemBuilder: (context, index) {
+                  Movie movie = snapshot.data!.results![index];
+                  return Padding(
+                    padding: AppScreenSize.uiPadding,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () {
+                            movieDetailsProvider.fetchMoviesDetails(movie.id!);
+                            nextScreen(context,
+                                MovieDetailsScreen(movieId: movie.id!));
+                          },
+                          child: Container(
+                            width: screenWidth /
+                                crossAxisCount, // Adjust width based on screen size
+                            height: 224,
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: selectedColor,
+                                  blurRadius: 1, // Chỉnh sửa độ mờ của bóng
+                                  offset: const Offset(
+                                      4, 4), // Thay đổi vị trí của bóng
+                                ),
+                              ],
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                fit: BoxFit.cover, // Đảm bảo ảnh được phủ kín
+                                image: NetworkImage(
+                                  'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        movie.title ?? 'Không có tiêu đề',
-                        textAlign: TextAlign.center,
-                        maxLines: 3,
-                        style: GoogleFonts.inter(
-                            textStyle: const TextStyle(fontSize: 14)),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          movie.title ?? 'Không có tiêu đề',
+                          textAlign: TextAlign.center,
+                          maxLines: 3,
+                          style: GoogleFonts.inter(
+                              textStyle: const TextStyle(fontSize: 14)),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           } else {
             return const Center(child: Text("Không có dữ liệu"));

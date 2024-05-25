@@ -24,7 +24,6 @@ class _NowPlayScreenState extends State<NowPlayScreen> {
   @override
   void initState() {
     super.initState();
-    // Giả sử api là một thực thể của lớp MoviesApi đã được khởi tạo và có thể truy cập được
     futureMovieList = api.getNowPlayingList();
   }
 
@@ -47,9 +46,9 @@ class _NowPlayScreenState extends State<NowPlayScreen> {
           } else if (snapshot.hasData && snapshot.data!.results != null) {
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, mainAxisExtent: 320
-                  // Số lượng cột
-                  ),
+                crossAxisCount: 2, mainAxisExtent: 320,
+                // Số lượng cột
+              ),
               itemCount: snapshot.data!.results!.length,
               itemBuilder: (context, index) {
                 Movie movie = snapshot.data!.results![index];

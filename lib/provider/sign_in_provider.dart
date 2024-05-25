@@ -36,6 +36,11 @@ class SignInProvider extends ChangeNotifier {
   String? _imageUrl;
   String? get imageUrl => _imageUrl;
 
+  set imageUrl(String? url) {
+    _imageUrl = url;
+    notifyListeners(); // Giúp cập nhật UI khi imageUrl thay đổi
+  }
+
   String? _gender;
   String? get gender => _gender;
 
@@ -266,7 +271,7 @@ class SignInProvider extends ChangeNotifier {
   }) async {
     try {
       final DocumentReference userDoc =
-          FirebaseFirestore.instance.collection('users').doc(_uid);
+          FirebaseFirestore.instance.collection('users').doc(uid);
 
       // Cập nhật thông tin người dùng trong Firestore
       await userDoc.update({
@@ -294,7 +299,6 @@ class SignInProvider extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      print('Error updating user data: $e');
       _hasError = true;
       _errorCode = e.toString();
       notifyListeners();
