@@ -21,17 +21,66 @@ class ForYouScreen extends StatefulWidget {
 
 class _ForYouScreenState extends State<ForYouScreen> {
   late Future<MoviesList> futureMovieList;
+  final ScrollController _scrollController = ScrollController();
+  List<Movie> _movies = [];
+  bool _isLoading = true;
+  bool _isLoadingMore = false;
+  int _currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    futureMovieList = api.getPopularMovies();
+    super.initState();
+    _loadMovies();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+              _scrollController.position.maxScrollExtent &&
+          !_isLoadingMore) {
+        _loadMoreMovies();
+      }
+    });
   }
 
-  Future<void> _refreshMovies() async {
+  Future<void> _loadMovies() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final movieList = await api.getPopularMovies(_currentPage);
+      setState(() {
+        _movies = movieList.results!;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadMoreMovies() async {
+    setState(() {
+      _isLoadingMore = true;
+    });
+    try {
+      final movieList = await api.getPopularMovies(++_currentPage);
+      setState(() {
+        _movies.addAll(movieList.results!);
+        _isLoadingMore = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
+  }
+
+  Future<void> _refreshMovie() async {
     await Future.delayed(const Duration(seconds: 2));
     setState(() {
-      futureMovieList = api.getPopularMovies();
+      _currentPage = 1;
+      _movies.clear();
+      _loadMovies();
     });
   }
 
@@ -50,80 +99,84 @@ class _ForYouScreenState extends State<ForYouScreen> {
     final crossAxisCount = isLandscape ? 3 : 2;
 
     return Scaffold(
-      body: FutureBuilder<MoviesList>(
-        future: futureMovieList,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Lỗi: ${snapshot.error}"));
-          } else if (snapshot.hasData && snapshot.data!.results != null) {
-            return RefreshIndicator(
-              onRefresh: _refreshMovies,
-              child: GridView.builder(
-                dragStartBehavior: DragStartBehavior.start,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  mainAxisExtent: 300,
-                ),
-                itemCount: snapshot.data!.results!.length,
-                itemBuilder: (context, index) {
-                  Movie movie = snapshot.data!.results![index];
-                  return Padding(
-                    padding: AppScreenSize.uiPadding,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        GestureDetector(
-                          onTap: () {
-                            movieDetailsProvider.fetchMoviesDetails(movie.id!);
-                            nextScreen(context,
-                                MovieDetailsScreen(movieId: movie.id!));
-                          },
-                          child: Container(
-                            width: screenWidth /
-                                crossAxisCount, // Adjust width based on screen size
-                            height: 224,
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: selectedColor,
-                                  blurRadius: 1, // Chỉnh sửa độ mờ của bóng
-                                  offset: const Offset(
-                                      4, 4), // Thay đổi vị trí của bóng
-                                ),
-                              ],
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                fit: BoxFit.cover, // Đảm bảo ảnh được phủ kín
-                                image: NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+      body: Stack(
+        children: [
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                  onRefresh: _refreshMovie,
+                  child: GridView.builder(
+                    controller: _scrollController,
+                    dragStartBehavior: DragStartBehavior.start,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      mainAxisExtent: 310,
+                    ),
+                    itemCount: _movies.length,
+                    itemBuilder: (context, index) {
+                      Movie movie = _movies[index];
+                      return Padding(
+                        padding: AppScreenSize.uiPadding,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            GestureDetector(
+                              onTap: () {
+                                movieDetailsProvider
+                                    .fetchMoviesDetails(movie.id!);
+                                nextScreen(context,
+                                    MovieDetailsScreen(movieId: movie.id!));
+                              },
+                              child: Container(
+                                width: screenWidth / crossAxisCount,
+                                height: 224,
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: selectedColor,
+                                      blurRadius: 1,
+                                      offset: const Offset(4, 4),
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(
+                                        'https://image.tmdb.org/t/p/w500${movie.posterPath}'),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 10),
+                            Text(
+                              movie.title ?? 'Không có tiêu đề',
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              maxLines: 3,
+                              style: GoogleFonts.inter(
+                                  textStyle: const TextStyle(fontSize: 14)),
+                            ),
+                          ],
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          movie.title ?? 'Không có tiêu đề',
-                          textAlign: TextAlign.center,
-                          maxLines: 3,
-                          style: GoogleFonts.inter(
-                              textStyle: const TextStyle(fontSize: 14)),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            );
-          } else {
-            return const Center(child: Text("Không có dữ liệu"));
-          }
-        },
+                      );
+                    },
+                  ),
+                ),
+          if (_isLoadingMore)
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 20,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+        ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }

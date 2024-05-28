@@ -39,12 +39,13 @@ class MoviesApi {
     return Exception(message);
   }
 
-  Future<MoviesList> getPopularMovies({
+  Future<MoviesList> getPopularMovies(
+    int? page, {
     String language = 'en-US',
-    int page = 1,
+    // int page = 1,
     String region = '',
   }) async {
-    return _getMoviesList('/3/movie/popular');
+    return _getMoviesList('/3/movie/popular?page=$page');
   }
 
   Future<MoviesList> getTopRatedMovies({
