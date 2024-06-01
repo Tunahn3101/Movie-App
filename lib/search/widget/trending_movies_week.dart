@@ -23,7 +23,7 @@ class _TrendingMoviesWeekState extends State<TrendingMoviesWeek> {
   @override
   void initState() {
     super.initState();
-    futureTrendingMoviesWeek = api.getTrendingMoviesWeek();
+    futureTrendingMoviesWeek = api.getTrendingMoviesWeek(1);
   }
 
   @override

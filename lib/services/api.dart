@@ -56,24 +56,20 @@ class MoviesApi {
     return _getMoviesList('/3/movie/top_rated');
   }
 
-  Future<MoviesList> getUpComingMovies({
+  Future<MoviesList> getUpComingMovies(
+    int? page, {
     String language = 'en-US',
-    int page = 1,
     String region = '',
   }) async {
-    return _getMoviesList('/3/movie/upcoming');
+    return _getMoviesList('/3/movie/upcoming?page=$page');
   }
 
-  Future<MoviesList> getNowPlayingList({
+  Future<MoviesList> getNowPlayingList(
+    int? page, {
     String language = 'en-US',
-    int page = 1,
     String region = '',
   }) async {
-    return _getMoviesList('/3/movie/now_playing', params: {
-      'language': language,
-      'page': page,
-      'region': region,
-    });
+    return _getMoviesList('/3/movie/now_playing?page=$page');
   }
 
   /// Tạo hàm chung để lấy danh sách phim
@@ -116,17 +112,17 @@ class MoviesApi {
   Future<MoviesList> searchMovies(
     String query, {
     String language = 'en-US',
-    int page = 1,
+    int? page,
     String region = '',
     bool includeAdult = false,
     int? year,
     int? primaryReleaseYear,
   }) async {
-    return _getData('/3/search/movie', (data) => MoviesList.fromJson(data),
+    return _getData(
+        '/3/search/movie?page=$page', (data) => MoviesList.fromJson(data),
         params: {
           'query': query,
           'language': language,
-          'page': page,
           'region': region,
           'include_adult': includeAdult,
           'year': year,
@@ -134,31 +130,37 @@ class MoviesApi {
         });
   }
 
-  Future<MoviesList> getTrendingMoviesDay({
+  Future<MoviesList> getTrendingMoviesDay(
+    int? page, {
     String timewindow = 'day',
     String language = 'en-US',
   }) async {
-    return _getTrendingMovies(timewindow: timewindow, language: language);
+    return _getTrendingMovies(
+        timewindow: timewindow, language: language, page: page);
   }
 
-  Future<MoviesList> getTrendingMoviesWeek({
+  Future<MoviesList> getTrendingMoviesWeek(
+    int? page, {
     String timewindow = 'week',
     String language = 'en-US',
   }) async {
-    return _getTrendingMovies(timewindow: timewindow, language: language);
+    return _getTrendingMovies(
+        timewindow: timewindow, language: language, page: page);
   }
 
   Future<MoviesList> _getTrendingMovies({
     required String timewindow,
     required String language,
+    required int? page,
   }) async {
-    return _getData(
-        '/3/trending/movie/$timewindow', (data) => MoviesList.fromJson(data),
+    return _getData('/3/trending/movie/$timewindow?page=$page',
+        (data) => MoviesList.fromJson(data),
         params: {
           'language': language,
         });
   }
 
+  // Lấy danh sách phim được thêm vào List
   Future<DetailsMovieToList> getDetailsMovieToList(
     int listId, {
     String language = 'en-US',

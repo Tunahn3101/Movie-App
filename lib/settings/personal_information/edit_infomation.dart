@@ -358,7 +358,7 @@ class _EditInformationState extends State<EditInformation> {
                   final DateTime? pickedDate = await showDatePicker(
                     context: context,
                     initialDate: selectedDate ?? DateTime.now(),
-                    firstDate: DateTime(1900),
+                    firstDate: DateTime(1990),
                     lastDate: DateTime.now(),
                   );
                   if (pickedDate != null && pickedDate != selectedDate) {
@@ -369,6 +369,7 @@ class _EditInformationState extends State<EditInformation> {
                 },
                 child: SizedBox(
                   height: 48,
+                  // absorbPointer ngắn sự kiện chạm
                   child: AbsorbPointer(
                     child: TextFormField(
                       controller: TextEditingController(

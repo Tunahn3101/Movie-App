@@ -16,7 +16,6 @@ void handleEmailSignIn(
     openSnackbar(context, "Check your Internet connection", Colors.red);
     return;
   }
-
   sp.signInWithEmail(email, password).then((_) {
     if (sp.hasError) {
       openSnackbar(context, sp.errorCode ?? "Login failed", Colors.red);

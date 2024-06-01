@@ -36,10 +36,10 @@ class SignInProvider extends ChangeNotifier {
   String? _imageUrl;
   String? get imageUrl => _imageUrl;
 
-  set imageUrl(String? url) {
-    _imageUrl = url;
-    notifyListeners(); // Giúp cập nhật UI khi imageUrl thay đổi
-  }
+  // set imageUrl(String? url) {
+  //   _imageUrl = url;
+  //   notifyListeners(); // Giúp cập nhật UI khi imageUrl thay đổi
+  // }
 
   String? _gender;
   String? get gender => _gender;

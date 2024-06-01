@@ -70,6 +70,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   endActionPane: ActionPane(
                     motion: const ScrollMotion(),
                     children: [
+                      // slidable dùng để xóa item
                       SlidableAction(
                         onPressed: (context) {
                           _removeMoovie(8301129, movie.id!);

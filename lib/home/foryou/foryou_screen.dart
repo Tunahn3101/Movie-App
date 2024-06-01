@@ -1,16 +1,14 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieapp/common/app_screen_size.dart';
-import 'package:movieapp/models/movie_list.dart';
 import 'package:movieapp/models/movie.dart';
 import 'package:movieapp/moviedetails/movie_details._screen.dart';
-import 'package:movieapp/provider/movie_details_provider.dart';
 import 'package:movieapp/utils/next_screen.dart';
 import 'package:provider/provider.dart';
-
-import '../../../services/api.dart';
 import '../../../themes/theme_provider.dart';
+import '../../provider/movie_details_provider.dart';
+import '../../provider/movies_provider.dart';
+import '../../services/api.dart';
 
 class ForYouScreen extends StatefulWidget {
   const ForYouScreen({super.key});
@@ -20,106 +18,74 @@ class ForYouScreen extends StatefulWidget {
 }
 
 class _ForYouScreenState extends State<ForYouScreen> {
-  late Future<MoviesList> futureMovieList;
   final ScrollController _scrollController = ScrollController();
-  List<Movie> _movies = [];
-  bool _isLoading = true;
-  bool _isLoadingMore = false;
-  int _currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    super.initState();
-    _loadMovies();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-              _scrollController.position.maxScrollExtent &&
-          !_isLoadingMore) {
-        _loadMoreMovies();
-      }
+
+    // sử dụng WidgetsBinding.instance.addPostFrameCallback để đảm bảo loadMovies chi được gọi sau khi xây dựng widget làn đầu tiên
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<MoviesProvider>(context, listen: false)
+          .loadMovies(api.getPopularMovies);
     });
+    _scrollController.addListener(_scrollListener);
   }
 
-  Future<void> _loadMovies() async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      final movieList = await api.getPopularMovies(_currentPage);
-      setState(() {
-        _movies = movieList.results!;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      Provider.of<MoviesProvider>(context, listen: false)
+          .loadMoreMovies(api.getPopularMovies);
     }
-  }
-
-  Future<void> _loadMoreMovies() async {
-    setState(() {
-      _isLoadingMore = true;
-    });
-    try {
-      final movieList = await api.getPopularMovies(++_currentPage);
-      setState(() {
-        _movies.addAll(movieList.results!);
-        _isLoadingMore = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoadingMore = false;
-      });
-    }
-  }
-
-  Future<void> _refreshMovie() async {
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() {
-      _currentPage = 1;
-      _movies.clear();
-      _loadMovies();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final movieProvider = Provider.of<MoviesProvider>(context);
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-
     final selectedColor = isDarkMode ? Colors.white54 : Colors.black54;
-
-    MovieDetailsProvider movieDetailsProvider =
+    final movieDetailsProvider =
         Provider.of<MovieDetailsProvider>(context, listen: false);
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final isLandscape =
+    // landscape: xoay ngang
+    // portrait : xoay dọc
+    // xác định hướng hiển thị (ngang - dọc) của thiết bị
+    final isLandScape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    final crossAxisCount = isLandscape ? 3 : 2;
+    // dựa vào hướng thiết bị để chia cột
+    final crossAxisCount = isLandScape ? 3 : 2;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : RefreshIndicator(
-                  onRefresh: _refreshMovie,
-                  child: GridView.builder(
-                    controller: _scrollController,
-                    dragStartBehavior: DragStartBehavior.start,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      mainAxisExtent: 310,
-                    ),
-                    itemCount: _movies.length,
-                    itemBuilder: (context, index) {
-                      Movie movie = _movies[index];
-                      return Padding(
-                        padding: AppScreenSize.uiPadding,
-                        child: Column(
+      body: Padding(
+        padding: AppScreenSize.uiPadding,
+        child: Stack(
+          children: [
+            movieProvider.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    onRefresh: () =>
+                        movieProvider.refreshMovies(api.getPopularMovies),
+                    child: GridView.builder(
+                      controller: _scrollController,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        mainAxisExtent: 310,
+                        crossAxisSpacing: 20,
+                      ),
+                      itemCount: movieProvider.movies.length,
+                      itemBuilder: (context, index) {
+                        Movie movie = movieProvider.movies[index];
+                        return Column(
                           children: [
-                            const SizedBox(height: 10),
                             GestureDetector(
                               onTap: () {
                                 movieDetailsProvider
@@ -133,10 +99,9 @@ class _ForYouScreenState extends State<ForYouScreen> {
                                 decoration: BoxDecoration(
                                   boxShadow: [
                                     BoxShadow(
-                                      color: selectedColor,
-                                      blurRadius: 1,
-                                      offset: const Offset(4, 4),
-                                    ),
+                                        color: selectedColor,
+                                        blurRadius: 1,
+                                        offset: const Offset(4, 4)),
                                   ],
                                   borderRadius: BorderRadius.circular(10),
                                   image: DecorationImage(
@@ -157,26 +122,20 @@ class _ForYouScreenState extends State<ForYouScreen> {
                                   textStyle: const TextStyle(fontSize: 14)),
                             ),
                           ],
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-          if (_isLoadingMore)
-            const Positioned(
-              left: 0,
-              right: 0,
-              bottom: 20,
-              child: Center(child: CircularProgressIndicator()),
-            ),
-        ],
+            if (movieProvider.isLoadingMore)
+              const Positioned(
+                left: 0,
+                right: 0,
+                bottom: 20,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 }

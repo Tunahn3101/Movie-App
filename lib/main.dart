@@ -5,6 +5,7 @@ import 'package:movieapp/provider/authentication_provider.dart';
 import 'package:movieapp/provider/internet_provider.dart';
 import 'package:movieapp/provider/movie_details_provider.dart';
 import 'package:movieapp/provider/movie_search_provider.dart';
+import 'package:movieapp/provider/movies_provider.dart';
 import 'package:movieapp/provider/sign_in_provider.dart';
 import 'package:movieapp/splash_screen.dart';
 import 'package:movieapp/themes/theme_provider.dart';
@@ -36,6 +37,12 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => AuthenticationProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => MoviesProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => MoviesProvider(),
         )
       ],
       child: const MyApp(),

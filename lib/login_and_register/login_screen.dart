@@ -35,6 +35,13 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordController.addListener(_updatePasswordValidity);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
   void _updateEmailValidity() {
     setState(() {
       isEmailValid = _validateEmail(emailController.text);

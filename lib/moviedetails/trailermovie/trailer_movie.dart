@@ -61,11 +61,11 @@ class _TrailerMovieState extends State<TrailerMovie> {
       body: Center(
         child: YoutubePlayer(
           controller: _controller,
-          showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.amber,
+          // showVideoProgressIndicator: true,
+          // progressIndicatorColor: Colors.amber,
           progressColors: const ProgressBarColors(
-            playedColor: Colors.amber,
-            handleColor: Colors.amberAccent,
+            playedColor: Colors.red,
+            handleColor: Colors.red,
           ),
           onReady: () {
             // Hành động cần thiết khi player sẵn sàng, nếu có
