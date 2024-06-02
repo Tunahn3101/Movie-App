@@ -67,7 +67,7 @@ class _TrendingMoviesWeekState extends State<TrendingMoviesWeek> {
                   child: Text("Error: ${snapshot.error}"),
                 );
               } else if (snapshot.hasData && snapshot.data!.results != null) {
-                int itemCount = 5;
+                int itemCount = 9;
                 if (snapshot.data!.results!.length < itemCount) {
                   itemCount = snapshot.data!.results!.length;
                 }

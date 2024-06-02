@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
+import 'package:movieapp/home/notification_screen.dart';
 import 'package:movieapp/provider/sign_in_provider.dart';
+import 'package:movieapp/settings/personal_information/personal_information.dart';
+import 'package:movieapp/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../themes/theme_provider.dart';
@@ -69,14 +73,21 @@ class _UIInforUserState extends State<UIInforUser> {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              nextScreen(context, const NotificationScreen());
+            },
             icon: Icon(isDarkMode
                 ? IconlyBold.notification
                 : IconlyLight.notification),
           ),
           const SizedBox(width: 16),
-          CircleAvatar(
-              radius: 30, backgroundImage: NetworkImage('${sp.imageUrl}')),
+          GestureDetector(
+            onTap: () {
+              nextScreen(context, const PersonalInformationScreen());
+            },
+            child: CircleAvatar(
+                radius: 30, backgroundImage: NetworkImage('${sp.imageUrl}')),
+          ),
         ],
       ),
     );

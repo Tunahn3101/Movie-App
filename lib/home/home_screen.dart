@@ -15,7 +15,21 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _tabController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Lấy thông tin về chế độ tối từ provider
@@ -26,36 +40,35 @@ class _HomeScreenState extends State<HomeScreen> {
     Color unselectedColor = isDarkMode ? Colors.white60 : Colors.black54;
     Color indicatorColor = isDarkMode ? Colors.white : Colors.black;
 
-    return DefaultTabController(
-      length: 4, // Số lượng các tab
-      child: Scaffold(
-        body: Column(
-          children: [
-            const SizedBox(height: 50),
-            const UIInforUser(),
-            TabBar(
-              labelColor: selectedColor,
-              unselectedLabelColor: unselectedColor,
-              indicatorColor: indicatorColor,
-              tabs: const [
-                Tab(text: 'For You'),
-                Tab(text: 'Trending'),
-                Tab(text: 'Coming'),
-                Tab(text: 'Now PLay'),
+    return Scaffold(
+      body: Column(
+        children: [
+          const SizedBox(height: 50),
+          const UIInforUser(),
+          TabBar(
+            controller: _tabController,
+            labelColor: selectedColor,
+            unselectedLabelColor: unselectedColor,
+            indicatorColor: indicatorColor,
+            tabs: const [
+              Tab(text: 'For You'),
+              Tab(text: 'Trending'),
+              Tab(text: 'Coming'),
+              Tab(text: 'Now PLay'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: const [
+                ForYouScreen(),
+                TrendingMoviesDay(),
+                UpComingScreen(),
+                NowPlayScreen(),
               ],
             ),
-            const Expanded(
-              child: TabBarView(
-                children: [
-                  ForYouScreen(),
-                  TrendingMoviesDay(),
-                  UpComingScreen(),
-                  NowPlayScreen(),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:movieapp/common/app_screen_size.dart';
+import 'package:provider/provider.dart';
+
+import '../../themes/theme_provider.dart';
 
 class CountryRegion extends StatefulWidget {
   const CountryRegion({super.key});
@@ -56,21 +60,25 @@ class _CountryRegionState extends State<CountryRegion> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
+
+    final selectedColor = isDarkMode ? Colors.white : Colors.black;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Country List'),
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+        padding: AppScreenSize.uiPadding,
         child: Column(
           children: [
+            const SizedBox(height: 10),
             Container(
               height: 48,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Colors.black,
+                  color: selectedColor,
                   width: 1,
                 ),
               ),
