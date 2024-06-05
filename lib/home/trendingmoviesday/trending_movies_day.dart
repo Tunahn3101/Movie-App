@@ -79,7 +79,7 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,
                         mainAxisExtent: 310,
-                        crossAxisSpacing: 20,
+                        crossAxisSpacing: 16,
                       ),
                       itemCount: movieProvider.movies.length,
                       itemBuilder: (context, index) {
@@ -93,21 +93,25 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
                                 nextScreen(context,
                                     MovieDetailsScreen(movieId: movie.id!));
                               },
-                              child: Container(
-                                width: screenWidth / crossAxisCount,
-                                height: 224,
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: selectedColor,
-                                        blurRadius: 1,
-                                        offset: const Offset(4, 4)),
-                                  ],
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(
-                                        'https://image.tmdb.org/t/p/w500${movie.posterPath}'),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                child: Container(
+                                  width: screenWidth / crossAxisCount,
+                                  height: 224,
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: selectedColor,
+                                          blurRadius: 1,
+                                          offset: const Offset(4, 4)),
+                                    ],
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                          'https://image.tmdb.org/t/p/w500${movie.posterPath}'),
+                                    ),
                                   ),
                                 ),
                               ),

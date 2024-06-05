@@ -405,54 +405,50 @@ class _EditInformationState extends State<EditInformation> {
                 ),
               ),
               const SizedBox(height: 12),
+              const Text(
+                'Country/Region',
+                style: TextStyle(
+                  fontFamily: 'SF Pro Display',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 8),
               GestureDetector(
-                  onTap: () async {
-                    final selectedCountry = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CountryRegion(),
-                      ),
-                    );
-                    // Cập nhật giá trị cho phần Country/Region
-                    if (selectedCountry != null) {
-                      setState(() {
-                        _selectedCountry = selectedCountry;
-                      });
-                    }
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Country/Region',
-                        style: TextStyle(
-                          fontFamily: 'SF Pro Display',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
+                onTap: () async {
+                  final selectedCountry = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CountryRegion(),
+                    ),
+                  );
+                  // Cập nhật giá trị cho phần Country/Region
+                  if (selectedCountry != null) {
+                    setState(() {
+                      _selectedCountry = selectedCountry;
+                    });
+                  }
+                },
+                child: TextFormField(
+                    enabled: false,
+                    decoration: InputDecoration(
+                        hintText: _selectedCountry ?? "Select Country",
+                        hintStyle: const TextStyle(
+                            fontFamily: 'SF Pro Display',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
+                            color: Color(0xFF303C41)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14, horizontal: 16),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFECEEED)),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                          enabled: false,
-                          decoration: InputDecoration(
-                              hintText: _selectedCountry ?? "Select Country",
-                              hintStyle: const TextStyle(
-                                  fontFamily: 'SF Pro Display',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: Color(0xFF303C41)),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 14, horizontal: 16),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide:
-                                    const BorderSide(color: Color(0xFFECEEED)),
-                              ),
-                              filled: true,
-                              fillColor: const Color(0xFFF9F9F9),
-                              suffixIcon: Image.asset(AppImage.icMore))),
-                    ],
-                  )),
+                        filled: true,
+                        fillColor: const Color(0xFFF9F9F9),
+                        suffixIcon: Image.asset(AppImage.icMore))),
+              ),
               const SizedBox(
                 height: 24,
               ),
