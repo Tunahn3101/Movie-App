@@ -149,6 +149,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     Color selectedColor =
         isDarkMode ? Colors.grey.shade800 : const Color(0xFFFAFAFA);
 
+    Color selectedText = isDarkMode ? Colors.white : Colors.black;
+
     return Scaffold(
       body: Consumer<MovieDetailsProvider>(builder: (context, provider, child) {
         final movieDetails = provider.movieDetails;
@@ -320,27 +322,35 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       onPressed: () {
                         handleSaveMovie(context, movieId);
                       },
-                      child: const Row(
+                      child: Row(
                         children: [
                           Icon(
                             IconlyLight.category,
                             size: 20,
+                            color: selectedText,
                           ),
-                          SizedBox(width: 4),
-                          Text('Add List'),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Add List',
+                            style: TextStyle(color: selectedText),
+                          ),
                         ],
                       ),
                     ),
                     ElevatedButton(
                       onPressed: () {},
-                      child: const Row(
+                      child: Row(
                         children: [
                           Icon(
                             IconlyLight.star,
                             size: 20,
+                            color: selectedText,
                           ),
-                          SizedBox(width: 4),
-                          Text('Rate'),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Rate',
+                            style: TextStyle(color: selectedText),
+                          ),
                         ],
                       ),
                     ),
