@@ -75,10 +75,11 @@ class _ForYouScreenState extends State<ForYouScreen> {
                     onRefresh: () =>
                         movieProvider.refreshMovies(api.getPopularMovies),
                     child: GridView.builder(
+                      padding: const EdgeInsets.only(top: 12),
                       controller: _scrollController,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,
-                        mainAxisExtent: 310,
+                        mainAxisExtent: 300,
                         crossAxisSpacing: 16,
                       ),
                       itemCount: movieProvider.movies.length,

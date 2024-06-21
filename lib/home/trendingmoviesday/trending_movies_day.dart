@@ -75,6 +75,7 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
                     onRefresh: () =>
                         movieProvider.refreshMovies(api.getTrendingMoviesDay),
                     child: GridView.builder(
+                      padding: const EdgeInsets.only(top: 12),
                       controller: _scrollController,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,

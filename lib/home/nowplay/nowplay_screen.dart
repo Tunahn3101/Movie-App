@@ -76,6 +76,7 @@ class _NowPlayScreenState extends State<NowPlayScreen> {
                     onRefresh: () =>
                         movieProvider.refreshMovies(api.getNowPlayingList),
                     child: GridView.builder(
+                      padding: const EdgeInsets.only(top: 12),
                       controller: _scrollController,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,

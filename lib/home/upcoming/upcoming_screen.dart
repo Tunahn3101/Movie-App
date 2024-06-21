@@ -76,6 +76,7 @@ class _UpComingScreenState extends State<UpComingScreen> {
                     onRefresh: () =>
                         movieProvider.refreshMovies(api.getUpComingMovies),
                     child: GridView.builder(
+                      padding: const EdgeInsets.only(top: 12),
                       controller: _scrollController,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,
