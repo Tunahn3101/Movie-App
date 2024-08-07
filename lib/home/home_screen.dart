@@ -50,6 +50,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             labelColor: selectedColor,
             unselectedLabelColor: unselectedColor,
             indicatorColor: indicatorColor,
+            isScrollable: false,
+            indicatorSize: TabBarIndicatorSize.tab,
             tabs: const [
               Tab(text: 'For You'),
               Tab(text: 'Trending'),
