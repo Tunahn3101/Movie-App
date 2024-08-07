@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:movieapp/common/app_images.dart';
+import 'package:movieapp/themes/theme_provider.dart';
 
 import 'package:provider/provider.dart';
 
@@ -167,6 +168,7 @@ class _EditInformationState extends State<EditInformation> {
   @override
   Widget build(BuildContext context) {
     final sp = context.read<SignInProvider>();
+    bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
@@ -181,284 +183,403 @@ class _EditInformationState extends State<EditInformation> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                        width: 160,
-                        height: 160,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFFFF8311), width: 2)),
-                        child: selectedImage != null
-                            ? CircleAvatar(
-                                backgroundImage: FileImage(selectedImage!))
-                            : CircleAvatar(
-                                backgroundImage: NetworkImage("${sp.imageUrl}"),
-                              )),
-                    Positioned(
-                      bottom: 10,
-                      right: 4,
-                      child: GestureDetector(
-                        onTap: () {
-                          optionPickImage(context);
-                        },
-                        child: Image.asset(AppImage.icEdit),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Name',
-                style: TextStyle(
-                  fontFamily: 'SF Pro Display',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              TextFormField(
-                controller: namecontroller,
-                keyboardType: TextInputType.name,
-                enabled: true,
-                decoration: InputDecoration(
-                  hintText: '${sp.name}',
-                  hintStyle: const TextStyle(
-                      fontFamily: 'SF Pro Display',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                      color: Color(0xFF303C41)),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Color(0xFFECEEED)),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                          width: 160,
+                          height: 160,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: const Color(0xFFFF8311), width: 2)),
+                          child: selectedImage != null
+                              ? CircleAvatar(
+                                  backgroundImage: FileImage(selectedImage!))
+                              : CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage("${sp.imageUrl}"),
+                                )),
+                      Positioned(
+                        bottom: 10,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () {
+                            optionPickImage(context);
+                          },
+                          child: Image.asset(AppImage.icEdit),
+                        ),
+                      )
+                    ],
                   ),
-                  filled: true,
-                  fillColor: const Color(0xFFF9F9F9),
                 ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Email',
-                style: TextStyle(
-                  fontFamily: 'SF Pro Display',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                enabled: false,
-                decoration: InputDecoration(
-                  hintText: '${sp.email}',
-                  hintStyle: const TextStyle(
-                      fontFamily: 'SF Pro Display',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                      color: Color(0xFF303C41)),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Color(0xFFECEEED)),
+                const SizedBox(height: 20),
+                const Text(
+                  'Name',
+                  style: TextStyle(
+                    fontFamily: 'SF Pro Display',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
                   ),
-                  filled: true,
-                  fillColor: const Color(0xFFF9F9F9),
                 ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Gender',
-                style: TextStyle(
-                  fontFamily: 'SF Pro Display',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
+                const SizedBox(
+                  height: 8,
                 ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 48,
-                child: DropdownButtonFormField2<String>(
-                  isExpanded: true,
+                TextField(
+                  autofocus: false,
+                  controller: namecontroller,
+                  enabled: true,
                   decoration: InputDecoration(
-                    // Add Horizontal padding using menuItemStyleData.padding so it matches
-                    // the menu padding when button's width is not specified.
-                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                    hintText: '${sp.name}',
+                    hintStyle: TextStyle(
+                      fontFamily: 'SF Pro Display',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      color:
+                          isDarkMode ? Colors.white : const Color(0xFF303C41),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 16,
+                    ),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8),
+                      ),
+                      borderSide: BorderSide(color: Color(0xFFECEEED)),
+                    ),
+                    fillColor: isDarkMode
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade200,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(8),
+                      ),
+                      borderSide: BorderSide(
+                          color: isDarkMode
+                              ? Colors.white38
+                              : const Color(0xFF303C41)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(8),
+                      ),
+                      borderSide: BorderSide(
+                        color: isDarkMode
+                            ? Colors.white38
+                            : const Color(0xFF303C41),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Email',
+                  style: TextStyle(
+                    fontFamily: 'SF Pro Display',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  enabled: false,
+                  decoration: InputDecoration(
+                    hintText: '${sp.email}',
+                    hintStyle: TextStyle(
+                      fontFamily: 'SF Pro Display',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      color:
+                          isDarkMode ? Colors.white : const Color(0xFF303C41),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 14, horizontal: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                    ),
-                    // Add more decoration..
-                  ),
-                  hint: Text(
-                    '${sp.gender}' ?? 'Select Your Gender',
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                  items: genderOptions
-                      .map((item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: const TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    selectedGender = value.toString();
-                  },
-                  onSaved: (value) {
-                    selectedGender = value.toString();
-                  },
-                  buttonStyleData: const ButtonStyleData(
-                    height: 48,
-                    padding: EdgeInsets.only(right: 8),
-                  ),
-                  iconStyleData: const IconStyleData(
-                    icon: Icon(
-                      IconlyLight.arrow_down_2,
-                    ),
-                    iconSize: 24,
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Date of birth',
-                style: TextStyle(
-                  fontFamily: 'SF Pro Display',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () async {
-                  final DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: selectedDate ?? DateTime.now(),
-                    firstDate: DateTime(1990),
-                    lastDate: DateTime.now(),
-                  );
-                  if (pickedDate != null && pickedDate != selectedDate) {
-                    setState(() {
-                      selectedDate = pickedDate;
-                    });
-                  }
-                },
-                child: SizedBox(
-                  height: 48,
-                  // absorbPointer ngắn sự kiện chạm
-                  child: AbsorbPointer(
-                    child: TextFormField(
-                      controller: TextEditingController(
-                        text: selectedDate != null
-                            ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
-                            : "",
+                      borderSide: const BorderSide(
+                        color: Color(0xFFECEEED),
                       ),
-                      decoration: InputDecoration(
-                        hintText: '${sp.dateOfBirth}' ?? "Select date",
-                        hintStyle: const TextStyle(
+                    ),
+                    filled: true,
+                    fillColor: isDarkMode
+                        ? Colors.grey.shade800
+                        : Colors.grey.shade200,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Gender',
+                  style: TextStyle(
+                    fontFamily: 'SF Pro Display',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 48,
+                  child: DropdownButtonFormField2<String>(
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                        borderSide: BorderSide(
+                          color: isDarkMode
+                              ? Colors.white38
+                              : const Color(0xFF303C41),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                        borderSide: BorderSide(
+                            color: isDarkMode
+                                ? Colors.white38
+                                : const Color(0xFF303C41)),
+                      ),
+                      fillColor: isDarkMode
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade200,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                      ),
+                      // Add more decoration..
+                    ),
+                    hint: Text(
+                      '${sp.gender}' ?? 'Select Your Gender',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color:
+                            isDarkMode ? Colors.white : const Color(0xFF303C41),
+                      ),
+                    ),
+                    items: genderOptions
+                        .map((item) => DropdownMenuItem<String>(
+                              value: item,
+                              child: Text(
+                                item,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      selectedGender = value.toString();
+                    },
+                    onSaved: (value) {
+                      selectedGender = value.toString();
+                    },
+                    buttonStyleData: const ButtonStyleData(
+                      height: 48,
+                      padding: EdgeInsets.only(right: 8),
+                    ),
+                    iconStyleData: IconStyleData(
+                      icon: Icon(
+                        IconlyLight.arrow_down_2,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
+                      iconSize: 24,
+                    ),
+                    dropdownStyleData: const DropdownStyleData(
+                      isOverButton: true,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 8,
+                              spreadRadius: 8,
+                            )
+                          ]),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Date of birth',
+                  style: TextStyle(
+                    fontFamily: 'SF Pro Display',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () async {
+                    final DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate ?? DateTime.now(),
+                      firstDate: DateTime(1990),
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null && pickedDate != selectedDate) {
+                      setState(() {
+                        selectedDate = pickedDate;
+                      });
+                    }
+                  },
+                  child: SizedBox(
+                    height: 48,
+                    // absorbPointer ngắn sự kiện chạm
+                    child: AbsorbPointer(
+                      child: TextField(
+                        controller: TextEditingController(
+                          text: selectedDate != null
+                              ? "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"
+                              : "",
+                        ),
+                        decoration: InputDecoration(
+                          hintText: '${sp.dateOfBirth}' ?? "Select date",
+                          hintStyle: TextStyle(
                             fontFamily: 'SF Pro Display',
                             fontWeight: FontWeight.w500,
                             fontSize: 15,
-                            color: Color(0xFF303C41)),
+                            color: isDarkMode
+                                ? Colors.white
+                                : const Color(0xFF303C41),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: 16,
+                          ),
+                          fillColor: isDarkMode
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade200,
+                          suffixIcon: Icon(
+                            IconlyLight.calendar,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.white38
+                                  : const Color(0xFF303C41),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            borderSide: BorderSide(
+                                color: isDarkMode
+                                    ? Colors.white38
+                                    : const Color(0xFF303C41)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Country/Region',
+                  style: TextStyle(
+                    fontFamily: 'SF Pro Display',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () async {
+                    final selectedCountry = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CountryRegion(),
+                      ),
+                    );
+                    // Cập nhật giá trị cho phần Country/Region
+                    if (selectedCountry != null) {
+                      setState(() {
+                        _selectedCountry = selectedCountry;
+                      });
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: _selectedCountry ?? "Select Country",
+                        hintStyle: TextStyle(
+                          fontFamily: 'SF Pro Display',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          color: isDarkMode
+                              ? Colors.white
+                              : const Color(0xFF303C41),
+                        ),
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 14,
                           horizontal: 16,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFECEEED)),
                         ),
-                        filled: true,
-                        fillColor: const Color(0xFFF9F9F9),
-                        suffixIcon: const Icon(
-                          IconlyLight.calendar,
-                          color: Colors.black,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          borderSide: BorderSide(
+                            color: isDarkMode
+                                ? Colors.white38
+                                : const Color(0xFF303C41),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.white38
+                                  : const Color(0xFF303C41)),
+                        ),
+                        suffixIcon: Image.asset(
+                          AppImage.icMore,
+                          color: isDarkMode ? Colors.white : Colors.black,
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Country/Region',
-                style: TextStyle(
-                  fontFamily: 'SF Pro Display',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
+                const SizedBox(
+                  height: 24,
                 ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () async {
-                  final selectedCountry = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CountryRegion(),
-                    ),
-                  );
-                  // Cập nhật giá trị cho phần Country/Region
-                  if (selectedCountry != null) {
-                    setState(() {
-                      _selectedCountry = selectedCountry;
-                    });
-                  }
-                },
-                child: TextFormField(
-                    enabled: false,
-                    decoration: InputDecoration(
-                        hintText: _selectedCountry ?? "Select Country",
-                        hintStyle: const TextStyle(
-                            fontFamily: 'SF Pro Display',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 15,
-                            color: Color(0xFF303C41)),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14, horizontal: 16),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFECEEED)),
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xFFF9F9F9),
-                        suffixIcon: Image.asset(AppImage.icMore))),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              ActionButton(
-                onPressed: _saveInformation,
-                text: 'Save',
-                backgroundColor: const Color(0xFFFF8311),
-              ),
-              const SizedBox(height: 90)
-            ],
+                ActionButton(
+                  onPressed: _saveInformation,
+                  text: 'Save',
+                  backgroundColor: const Color(0xFFFF8311),
+                ),
+                const SizedBox(height: 30)
+              ],
+            ),
           ),
         ),
       ),

@@ -76,7 +76,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                 text: 'Edit',
                 backgroundColor: const Color(0xFFFF8311),
               ),
-              const SizedBox(height: 90)
+              const SizedBox(height: 30)
             ],
           ),
         ),
