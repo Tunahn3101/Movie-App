@@ -7,7 +7,6 @@ class MovieDetailsProvider with ChangeNotifier {
 
   Future<void> fetchMoviesDetails(int movieId) async {
     movieDetails = null;
-    notifyListeners();
     try {
       movieDetails = await api.getMovie(movieId);
       notifyListeners();

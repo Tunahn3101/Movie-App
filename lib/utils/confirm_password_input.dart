@@ -51,6 +51,9 @@ class _ConfirmPasswordInputState extends State<ConfirmPasswordInput> {
           height: 8,
         ),
         TextFormField(
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           controller: widget.controller,
           style: const TextStyle(
             fontFamily: 'SF Pro Display',

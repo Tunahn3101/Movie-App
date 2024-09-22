@@ -44,10 +44,10 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
               } else if (!snapshot.hasData || snapshot.data!.results!.isEmpty) {
                 return const Text('No reviews available.');
               }
-
               var reviews = snapshot.data!.results!;
               return ListView.builder(
                 itemCount: reviews.length,
+                padding: EdgeInsets.zero,
                 itemBuilder: (context, index) {
                   Results review = reviews[index];
                   return ListTile(

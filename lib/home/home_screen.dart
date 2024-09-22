@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 50),
+          const SizedBox(height: 24),
           const UIInforUser(),
           TabBar(
             controller: _tabController,

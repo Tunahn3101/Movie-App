@@ -8,3 +8,11 @@ void nextScreen(context, page) {
     ),
   );
 }
+
+void backScreenReplacement(context, page) {
+  Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => page,
+      ));
+}

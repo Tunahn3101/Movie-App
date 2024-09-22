@@ -49,6 +49,9 @@ class _PasswordInputState extends State<PasswordInput> {
           children: [
             Expanded(
               child: TextFormField(
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
                 controller: widget.controller,
                 style: const TextStyle(
                   fontFamily: 'SF Pro Display',

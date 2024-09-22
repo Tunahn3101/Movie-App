@@ -39,6 +39,9 @@ class _EmailInputState extends State<EmailInput> {
         ),
         const SizedBox(height: 8),
         TextFormField(
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
           controller: widget.controller,
           style: const TextStyle(
             fontFamily: 'SF Pro Display',

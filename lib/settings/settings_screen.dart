@@ -46,7 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ActionButton(
                 onPressed: () {
                   sp.userSignOut();
-                  nextScreen(context, const LoginScreen());
+                  backScreenReplacement(context, const LoginScreen());
                 },
                 text: 'Logout',
                 backgroundColor: const Color(0xFFDB515E),

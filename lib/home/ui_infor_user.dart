@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:movieapp/home/notification_screen.dart';
@@ -30,7 +29,7 @@ class _UIInforUserState extends State<UIInforUser> {
     }
   }
 
-  Future getData() async {
+  Future<void> getData() async {
     final sp = context.read<SignInProvider>();
     sp.getDataFromSharedPreferences();
   }

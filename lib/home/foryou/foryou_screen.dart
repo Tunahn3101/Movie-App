@@ -6,7 +6,6 @@ import 'package:movieapp/moviedetails/movie_details._screen.dart';
 import 'package:movieapp/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import '../../../themes/theme_provider.dart';
-import '../../provider/movie_details_provider.dart';
 import '../../provider/movies_provider.dart';
 import '../../services/api.dart';
 
@@ -52,9 +51,6 @@ class _ForYouScreenState extends State<ForYouScreen> {
     final movieProvider = Provider.of<MoviesProvider>(context);
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     final selectedColor = isDarkMode ? Colors.white54 : Colors.black54;
-    final movieDetailsProvider =
-        Provider.of<MovieDetailsProvider>(context, listen: false);
-
     final screenWidth = MediaQuery.of(context).size.width;
     // landscape: xoay ngang
     // portrait : xoay dọc
@@ -89,8 +85,6 @@ class _ForYouScreenState extends State<ForYouScreen> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                movieDetailsProvider
-                                    .fetchMoviesDetails(movie.id!);
                                 nextScreen(context,
                                     MovieDetailsScreen(movieId: movie.id!));
                               },

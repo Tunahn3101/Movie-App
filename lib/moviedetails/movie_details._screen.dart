@@ -1,13 +1,12 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:movieapp/common/app_images.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../provider/authentication_provider.dart';
 import '../provider/movie_details_provider.dart';
@@ -39,8 +38,11 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
 
   @override
   void initState() {
-    super.initState();
     movieId = widget.movieId;
+    final movieDetailsProvider =
+        Provider.of<MovieDetailsProvider>(context, listen: false);
+    movieDetailsProvider.fetchMoviesDetails(movieId);
+    super.initState();
   }
 
   @override
@@ -136,6 +138,15 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     final hours = runtime ~/ 60;
     final minutes = runtime % 60;
     return '${hours}h${minutes}min'; // Format "Xh Ymin"
+  }
+
+  void _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -273,7 +284,14 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          nextScreen(context, const TrailerMovie());
+                          // nextScreen(
+                          //     context,
+                          //     TrailerMovie(
+                          //       videoKey:
+                          //           '${movieDetails.videos?.results?[0].key}',
+                          //     ));
+                          _launchURL(
+                              'https://www.youtube.com/watch?v=${movieDetails.videos?.results?[0].key}');
                         },
                         child: const Icon(
                           IconlyBroken.play,
