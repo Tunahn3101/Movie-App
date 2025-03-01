@@ -1,4 +1,6 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:movieapp/services/local_notification_service.dart';
 import 'package:movieapp/settings/ui/ui_setting_list.dart';
 import 'package:movieapp/settings/ui_info_user_setting.dart';
 import 'package:provider/provider.dart';
