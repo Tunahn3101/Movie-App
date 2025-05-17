@@ -44,49 +44,48 @@ class _UiBottomNavigationState extends State<UiBottomNavigation> {
   Widget build(BuildContext context) {
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
-    final selectedColor = isDarkMode ? Colors.white : Colors.grey.shade600;
+    final selectedColor = isDarkMode ? Colors.white : const Color.fromARGB(255, 23, 23, 23);
     return Scaffold(
       extendBody: true,
       body: _selectedPage(),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: CrystalNavigationBar(
-          currentIndex: _SelectedTab.values.indexOf(_selectedTab),
-          // indicatorColor: Colors.white,
-          unselectedItemColor: Colors.white70,
-          backgroundColor: Colors.black.withOpacity(0.1),
-          // outlineBorderColor: Colors.black.withOpacity(0.1),
-          onTap: _handleIndexChanged,
-          items: [
-            /// Home
-            CrystalNavigationBarItem(
-              icon: IconlyBold.home,
-              unselectedIcon: IconlyLight.home,
-              selectedColor: selectedColor,
-            ),
+      bottomNavigationBar: CrystalNavigationBar(
+        margin: EdgeInsets.zero,
+        marginR: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+        currentIndex: _SelectedTab.values.indexOf(_selectedTab),
+        // indicatorColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        backgroundColor: Colors.black.withOpacity(0.1),
+        // outlineBorderColor: Colors.black.withOpacity(0.1),
+        onTap: _handleIndexChanged,
+        items: [
+          /// Home
+          CrystalNavigationBarItem(
+            icon: IconlyBold.home,
+            unselectedIcon: IconlyLight.home,
+            selectedColor: selectedColor,
+          ),
 
-            /// Search
-            CrystalNavigationBarItem(
-              icon: IconlyBold.search,
-              unselectedIcon: IconlyLight.search,
-              selectedColor: selectedColor,
-            ),
+          /// Search
+          CrystalNavigationBarItem(
+            icon: IconlyBold.search,
+            unselectedIcon: IconlyLight.search,
+            selectedColor: selectedColor,
+          ),
 
-            /// Library
-            CrystalNavigationBarItem(
-              icon: IconlyBold.category,
-              unselectedIcon: IconlyLight.category,
-              selectedColor: selectedColor,
-            ),
+          /// Library
+          CrystalNavigationBarItem(
+            icon: IconlyBold.category,
+            unselectedIcon: IconlyLight.category,
+            selectedColor: selectedColor,
+          ),
 
-            /// Settings
-            CrystalNavigationBarItem(
-              icon: IconlyBold.setting,
-              unselectedIcon: IconlyLight.setting,
-              selectedColor: selectedColor,
-            ),
-          ],
-        ),
+          /// Settings
+          CrystalNavigationBarItem(
+            icon: IconlyBold.setting,
+            unselectedIcon: IconlyLight.setting,
+            selectedColor: selectedColor,
+          ),
+        ],
       ),
     );
   }

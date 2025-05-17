@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class SignInProvider extends ChangeNotifier {
   // instance of firebaseauth, facebook and google
@@ -98,59 +99,149 @@ class SignInProvider extends ChangeNotifier {
 
   // sign in with google
   Future signInWithGoogle() async {
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
+    try {
+      // Reset error state
+      _hasError = false;
+      _errorCode = null;
 
-    final googleUser =
-        await GoogleSignIn(scopes: ['profile', 'email']).signIn();
+      // Single sign in call with proper scopes
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (googleSignInAccount != null) {
-      // executing our authentication
-      try {
-        final GoogleSignInAuthentication googleSignInAuthentication =
-            await googleUser!.authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleSignInAuthentication.accessToken,
-          idToken: googleSignInAuthentication.idToken,
-        );
-
-        // signing to firebase user instance
-        final User userDetails =
-            (await firebaseAuth.signInWithCredential(credential)).user!;
-
-        // now save all values
-        _name = userDetails.displayName;
-        _email = userDetails.email;
-        _imageUrl = userDetails.photoURL;
-        _provider = "GOOGLE";
-        _uid = userDetails.uid;
-        _gender = "";
-        _dateOfBirth = "";
-        _countries = "";
+      if (googleUser == null) {
+        // User cancelled the sign-in flow
+        _hasError = true;
+        _errorCode = "Sign in cancelled by user";
         notifyListeners();
-      } on FirebaseAuthException catch (e) {
-        switch (e.code) {
-          case "account-exists-with-different-credential":
-            _errorCode =
-                "You already have an account with us. Use correct provider";
-            _hasError = true;
-            notifyListeners();
-            break;
-
-          case "null":
-            _errorCode = "Some unexpected error while trying to sign in";
-            _hasError = true;
-            notifyListeners();
-            break;
-          default:
-            _errorCode = e.toString();
-            _hasError = true;
-            notifyListeners();
-        }
+        return;
       }
-    } else {
-      _hasError = true;
+
+      // Get authentication details
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create credential
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase
+      final UserCredential userCredential =
+          await firebaseAuth.signInWithCredential(credential);
+
+      final User? userDetails = userCredential.user;
+
+      if (userDetails == null) {
+        _hasError = true;
+        _errorCode = "Failed to get user details";
+        notifyListeners();
+        return;
+      }
+
+      // Update user data
+      _name = userDetails.displayName;
+      _email = userDetails.email;
+      _imageUrl = userDetails.photoURL;
+      _provider = "GOOGLE";
+      _uid = userDetails.uid;
+      _gender = "";
+      _dateOfBirth = "";
+      _countries = "";
+
       notifyListeners();
+    } on FirebaseAuthException catch (e) {
+      _hasError = true;
+      switch (e.code) {
+        case "account-exists-with-different-credential":
+          _errorCode =
+              "You already have an account with us. Use correct provider";
+          break;
+        case "invalid-credential":
+          _errorCode = "Invalid credentials provided";
+          break;
+        case "operation-not-allowed":
+          _errorCode = "Google sign in is not enabled";
+          break;
+        case "user-disabled":
+          _errorCode = "This account has been disabled";
+          break;
+        default:
+          _errorCode = e.message ?? "An unknown error occurred";
+      }
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      _errorCode = "An unexpected error occurred: ${e.toString()}";
+      notifyListeners();
+    }
+  }
+
+  //sign in with Apple
+
+  Future<bool> signInWithApple() async {
+    try {
+      // Reset error state
+      _hasError = false;
+      _errorCode = null;
+
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName
+        ],
+      );
+
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      );
+
+      final userCredential =
+          await firebaseAuth.signInWithCredential(oauthCredential);
+      final user = userCredential.user;
+
+      if (user == null) {
+        _hasError = true;
+        _errorCode = 'user-credential-null';
+        notifyListeners();
+        return false;
+      }
+
+      // Update provider state
+      _name = user.displayName ?? credential.givenName ?? "Apple User";
+      _email = user.email ?? credential.email ?? "";
+      _imageUrl = user.photoURL ??
+          "https://cdn1.iconfinder.com/data/icons/round2-set/25/Profile_ic-512.png";
+      _provider = "APPLE";
+      _uid = user.uid;
+      _gender = "";
+      _dateOfBirth = "";
+      _countries = "";
+
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (err) {
+      _hasError = true;
+      _errorCode = err.code;
+      notifyListeners();
+      return false;
+    } on SignInWithAppleAuthorizationException catch (err) {
+      _hasError = true;
+      switch (err.code) {
+        case AuthorizationErrorCode.canceled:
+          _errorCode = "Sign in cancelled by user";
+          break;
+        default:
+          _errorCode = "Apple Sign-In error: ${err.message}";
+          print("Apple Sign-In error: ${err.message}");
+      }
+      notifyListeners();
+      return false;
+    } catch (err) {
+      _hasError = true;
+      _errorCode = "An error occurred. Please try again later.";
+      notifyListeners();
+      return false;
     }
   }
 
@@ -336,4 +427,18 @@ class SignInProvider extends ChangeNotifier {
     final SharedPreferences s = await SharedPreferences.getInstance();
     s.clear();
   }
+}
+
+abstract class Failure {
+  final String message;
+
+  Failure(this.message);
+}
+
+class ServerFailure extends Failure {
+  ServerFailure(String message) : super(message);
+}
+
+class NetworkFailure extends Failure {
+  NetworkFailure(String message) : super(message);
 }

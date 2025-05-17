@@ -85,7 +85,12 @@ class _UIInforUserState extends State<UIInforUser> {
               nextScreen(context, const PersonalInformationScreen());
             },
             child: CircleAvatar(
-                radius: 30, backgroundImage: NetworkImage('${sp.imageUrl}')),
+              radius: 30,
+              backgroundImage: NetworkImage(
+                sp.imageUrl ??
+                    'https://img.freepik.com/premium-vector/character-avatar-isolated_729149-194801.jpg?semt=ais_hybrid&w=740',
+              ),
+            ),
           ),
         ],
       ),

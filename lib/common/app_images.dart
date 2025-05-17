@@ -11,4 +11,5 @@ class AppImage {
   static const icMore = 'assets/images/ic-more.png';
   static const icTMDB = 'assets/images/logo_tmdb.png';
   static const icEdit = 'assets/images/ic-edit.png';
+  static const appleLogo = 'assets/images/apple-logo.png';
 }

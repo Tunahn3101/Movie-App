@@ -1,0 +1,2 @@
+/Users/tunahn/Movie-App/android/app/.cxx/Debug/36424q54/x86/CMakeFiles/edit_cache.dir
+/Users/tunahn/Movie-App/android/app/.cxx/Debug/36424q54/x86/CMakeFiles/rebuild_cache.dir

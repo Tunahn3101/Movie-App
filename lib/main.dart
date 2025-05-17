@@ -24,7 +24,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await FirebaseApi().initNotifications();
+  // await FirebaseApi().initNotifications();
 
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
 

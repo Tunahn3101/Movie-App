@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 24),
+          const SizedBox(height: 40),
           const UIInforUser(),
           TabBar(
             controller: _tabController,
@@ -52,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             indicatorColor: indicatorColor,
             isScrollable: false,
             indicatorSize: TabBarIndicatorSize.tab,
+            labelStyle: TextStyle(fontSize: 14),
             tabs: const [
               Tab(text: 'For You'),
               Tab(text: 'Trending'),

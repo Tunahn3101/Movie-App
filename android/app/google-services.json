@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "67773570691-q11ak9u4iukrkj3nhsdet3s9sfu1u4vr.apps.googleusercontent.com",
+          "client_id": "67773570691-n4tu3uvb23pc8d59jg1j7lksk8sttf9c.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.movieapp",
-            "certificate_hash": "48e3284d920bc7c4531c097573ae62de4d997cc4"
+            "certificate_hash": "95bc3bc7d773eb463e659ee22cf0dd5b17e6029c"
           }
         },
         {

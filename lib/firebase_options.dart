@@ -59,11 +59,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAV89KzVbY3_gsCO4FtGbgR00QOt77cRH4',
-    appId: '1:67773570691:ios:1f29899867948b8c5985b6',
+    appId: '1:67773570691:ios:3ed448adc93312a65985b6',
     messagingSenderId: '67773570691',
     projectId: 'movie-app-3101',
     storageBucket: 'movie-app-3101.appspot.com',
-    iosBundleId: 'com.example.movieapp',
+    androidClientId: '67773570691-n4tu3uvb23pc8d59jg1j7lksk8sttf9c.apps.googleusercontent.com',
+    iosClientId: '67773570691-g9tdqa62sc0e1eq96lcbrq0nm1p74ij1.apps.googleusercontent.com',
+    iosBundleId: 'com.tunahn.movieapp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

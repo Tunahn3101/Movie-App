@@ -33,57 +33,60 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       backgroundColor: selectedColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Expanded(
-          child: FutureBuilder<MovieReviews>(
-            future: api.getMovieReviews(movieId),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (!snapshot.hasData || snapshot.data!.results!.isEmpty) {
-                return const Text('No reviews available.');
-              }
-              var reviews = snapshot.data!.results!;
-              return ListView.builder(
-                itemCount: reviews.length,
-                padding: EdgeInsets.zero,
-                itemBuilder: (context, index) {
-                  Results review = reviews[index];
-                  return ListTile(
-                    title: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(IconlyBold.profile,
-                            color: isDarkMode ? Colors.white : Colors.black,
-                            size: 24),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${review.author}',
-                                style: GoogleFonts.roboto(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${review.content}',
-                                maxLines: 6,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.roboto(fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+        child: FutureBuilder<MovieReviews>(
+          future: api.getMovieReviews(movieId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (!snapshot.hasData || snapshot.data!.results!.isEmpty) {
+              return Center(
+                child: const Text(
+                  'No reviews available.',
+                ),
               );
-            },
-          ),
+            }
+            var reviews = snapshot.data!.results!;
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: reviews.length,
+              padding: EdgeInsets.zero,
+              itemBuilder: (context, index) {
+                Results review = reviews[index];
+                return ListTile(
+                  title: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(IconlyBold.profile,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                          size: 24),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${review.author}',
+                              style: GoogleFonts.roboto(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${review.content}',
+                              maxLines: 6,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.roboto(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
         ),
       ),
     );

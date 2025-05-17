@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:movieapp/common/app_images.dart';
+import 'package:movieapp/handlesignin/apple_sign_in.dart';
 import 'package:movieapp/handlesignin/email_sign_in.dart';
 
 import '../handlesignin/google_sign_in.dart';
@@ -169,9 +171,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         ActionButtonSocial(
-                          imagePath: 'assets/images/facebook.png',
-                          text: 'Facebook',
-                          onTap: () {},
+                          imagePath: AppImage.appleLogo,
+                          text: 'Apple',
+                          onTap: () {
+                            handleAppleSignIn(context);
+                          },
                         ),
                         const SizedBox(
                           width: 16,
