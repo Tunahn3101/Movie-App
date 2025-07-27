@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieapp/common/app_screen_size.dart';
 import 'package:movieapp/models/movie.dart';
-import 'package:movieapp/moviedetails/movie_details._screen.dart';
+import 'package:movieapp/moviedetails/movie_details_screen.dart';
 import 'package:movieapp/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import '../../../themes/theme_provider.dart';
@@ -25,8 +25,7 @@ class _ForYouScreenState extends State<ForYouScreen> {
 
     // sử dụng WidgetsBinding.instance.addPostFrameCallback để đảm bảo loadMovies chi được gọi sau khi xây dựng widget làn đầu tiên
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MoviesProvider>(context, listen: false)
-          .loadMovies(api.getPopularMovies);
+      Provider.of<MoviesProvider>(context, listen: false).loadForYouMovies();
     });
     _scrollController.addListener(_scrollListener);
   }
@@ -42,7 +41,7 @@ class _ForYouScreenState extends State<ForYouScreen> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       Provider.of<MoviesProvider>(context, listen: false)
-          .loadMoreMovies(api.getPopularMovies);
+          .loadMoreForYouMovies();
     }
   }
 
@@ -65,11 +64,10 @@ class _ForYouScreenState extends State<ForYouScreen> {
         padding: AppScreenSize.uiPadding,
         child: Stack(
           children: [
-            movieProvider.isLoading
+            movieProvider.isLoadingForYou
                 ? const Center(child: CircularProgressIndicator())
                 : RefreshIndicator(
-                    onRefresh: () =>
-                        movieProvider.refreshMovies(api.getPopularMovies),
+                    onRefresh: () => movieProvider.refreshForYouMovies(),
                     child: GridView.builder(
                       padding: const EdgeInsets.only(top: 12),
                       controller: _scrollController,
@@ -78,9 +76,9 @@ class _ForYouScreenState extends State<ForYouScreen> {
                         mainAxisExtent: 300,
                         crossAxisSpacing: 16,
                       ),
-                      itemCount: movieProvider.movies.length,
+                      itemCount: movieProvider.forYouMovies.length,
                       itemBuilder: (context, index) {
-                        Movie movie = movieProvider.movies[index];
+                        Movie movie = movieProvider.forYouMovies[index];
                         return Column(
                           children: [
                             GestureDetector(
@@ -125,7 +123,7 @@ class _ForYouScreenState extends State<ForYouScreen> {
                       },
                     ),
                   ),
-            if (movieProvider.isLoadingMore)
+            if (movieProvider.isLoadingMoreForYou)
               const Positioned(
                 left: 0,
                 right: 0,

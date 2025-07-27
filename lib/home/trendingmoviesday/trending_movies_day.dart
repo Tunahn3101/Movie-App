@@ -4,7 +4,7 @@ import 'package:movieapp/common/app_screen_size.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/movie.dart';
-import '../../../moviedetails/movie_details._screen.dart';
+import '../../moviedetails/movie_details_screen.dart';
 import '../../../provider/movie_details_provider.dart';
 import '../../../services/api.dart';
 import '../../../themes/theme_provider.dart';
@@ -26,8 +26,7 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MoviesProvider>(context, listen: false)
-          .loadMovies(api.getTrendingMoviesDay);
+      Provider.of<MoviesProvider>(context, listen: false).loadTrendingMovies();
     });
     _scrollController.addListener(_scrollListener);
   }
@@ -43,7 +42,7 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       Provider.of<MoviesProvider>(context, listen: false)
-          .loadMoreMovies(api.getTrendingMoviesDay);
+          .loadMoreTrendingMovies();
     }
   }
 
@@ -69,11 +68,12 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
         padding: AppScreenSize.uiPadding,
         child: Stack(
           children: [
-            movieProvider.isLoading
-                ? const Center(child: CircularProgressIndicator())
+            movieProvider.isLoadingTrending
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
                 : RefreshIndicator(
-                    onRefresh: () =>
-                        movieProvider.refreshMovies(api.getTrendingMoviesDay),
+                    onRefresh: () => movieProvider.refreshTrendingMovies(),
                     child: GridView.builder(
                       padding: const EdgeInsets.only(top: 12),
                       controller: _scrollController,
@@ -82,9 +82,9 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
                         mainAxisExtent: 310,
                         crossAxisSpacing: 16,
                       ),
-                      itemCount: movieProvider.movies.length,
+                      itemCount: movieProvider.trendingMovies.length,
                       itemBuilder: (context, index) {
-                        Movie movie = movieProvider.movies[index];
+                        Movie movie = movieProvider.trendingMovies[index];
                         return Column(
                           children: [
                             GestureDetector(
@@ -131,7 +131,7 @@ class _TrendingMoviesDayState extends State<TrendingMoviesDay> {
                       },
                     ),
                   ),
-            if (movieProvider.isLoadingMore)
+            if (movieProvider.isLoadingMoreTrending)
               const Positioned(
                 left: 0,
                 right: 0,

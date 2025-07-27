@@ -3,12 +3,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:movieapp/firebase_options.dart';
 import 'package:movieapp/handlesignin/firebase_api.dart';
-import 'package:movieapp/provider/authentication_provider.dart';
+import 'package:movieapp/provider/library_provider.dart';
 import 'package:movieapp/provider/internet_provider.dart';
 import 'package:movieapp/provider/movie_details_provider.dart';
 import 'package:movieapp/provider/movie_search_provider.dart';
 import 'package:movieapp/provider/movies_provider.dart';
 import 'package:movieapp/provider/sign_in_provider.dart';
+import 'package:movieapp/provider/tab_provider.dart';
+import 'package:movieapp/provider/version_app_provider.dart';
 import 'package:movieapp/services/local_notification_service.dart';
 import 'package:movieapp/splash_screen.dart';
 import 'package:movieapp/themes/theme_provider.dart';
@@ -58,14 +60,17 @@ void main() async {
           create: (context) => InternetProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => AuthenticationProvider(),
+          create: (context) => LibraryProvider(),
         ),
         ChangeNotifierProvider(
           create: (context) => MoviesProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => MoviesProvider(),
-        )
+          create: (context) => TabProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => VersionAppProvider(),
+        ),
       ],
       child: const MyApp(),
     ),

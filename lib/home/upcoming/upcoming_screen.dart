@@ -4,7 +4,7 @@ import 'package:movieapp/common/app_screen_size.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/movie.dart';
-import '../../../moviedetails/movie_details._screen.dart';
+import '../../moviedetails/movie_details_screen.dart';
 import '../../../provider/movie_details_provider.dart';
 import '../../../services/api.dart';
 import '../../../themes/theme_provider.dart';
@@ -27,8 +27,7 @@ class _UpComingScreenState extends State<UpComingScreen> {
 
     // sử dụng WidgetsBinding.instance.addPostFrameCallback để đảm bảo loadMovies chi được gọi sau khi xây dựng widget làn đầu tiên
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MoviesProvider>(context, listen: false)
-          .loadMovies(api.getUpComingMovies);
+      Provider.of<MoviesProvider>(context, listen: false).loadUpcomingMovies();
     });
     _scrollController.addListener(_scrollListener);
   }
@@ -44,7 +43,7 @@ class _UpComingScreenState extends State<UpComingScreen> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       Provider.of<MoviesProvider>(context, listen: false)
-          .loadMoreMovies(api.getUpComingMovies);
+          .loadMoreUpcomingMovies();
     }
   }
 
@@ -70,11 +69,10 @@ class _UpComingScreenState extends State<UpComingScreen> {
         padding: AppScreenSize.uiPadding,
         child: Stack(
           children: [
-            movieProvider.isLoading
+            movieProvider.isLoadingUpcoming
                 ? const Center(child: CircularProgressIndicator())
                 : RefreshIndicator(
-                    onRefresh: () =>
-                        movieProvider.refreshMovies(api.getUpComingMovies),
+                    onRefresh: () => movieProvider.refreshUpcomingMovies(),
                     child: GridView.builder(
                       padding: const EdgeInsets.only(top: 12),
                       controller: _scrollController,
@@ -83,9 +81,9 @@ class _UpComingScreenState extends State<UpComingScreen> {
                         mainAxisExtent: 310,
                         crossAxisSpacing: 16,
                       ),
-                      itemCount: movieProvider.movies.length,
+                      itemCount: movieProvider.upcomingMovies.length,
                       itemBuilder: (context, index) {
-                        Movie movie = movieProvider.movies[index];
+                        Movie movie = movieProvider.upcomingMovies[index];
                         return Column(
                           children: [
                             GestureDetector(
@@ -132,7 +130,7 @@ class _UpComingScreenState extends State<UpComingScreen> {
                       },
                     ),
                   ),
-            if (movieProvider.isLoadingMore)
+            if (movieProvider.isLoadingMoreUpcoming)
               const Positioned(
                 left: 0,
                 right: 0,

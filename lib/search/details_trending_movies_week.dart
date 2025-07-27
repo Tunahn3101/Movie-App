@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/movie.dart';
-import '../../moviedetails/movie_details._screen.dart';
+import '../moviedetails/movie_details_screen.dart';
 import '../../provider/movie_details_provider.dart';
 import '../../services/api.dart';
 import '../../themes/theme_provider.dart';
@@ -27,7 +27,7 @@ class _DetailsTrendingMovieWeekState extends State<DetailsTrendingMovieWeek> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MoviesProvider>(context, listen: false)
-          .loadMovies(api.getTrendingMoviesWeek);
+          .loadDetailsTrendingWeekMovies();
     });
     _scrollController.addListener(_scrollListener);
   }
@@ -43,7 +43,7 @@ class _DetailsTrendingMovieWeekState extends State<DetailsTrendingMovieWeek> {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       Provider.of<MoviesProvider>(context, listen: false)
-          .loadMoreMovies(api.getTrendingMoviesWeek);
+          .loadMoreDetailsTrendingWeekMovies();
     }
   }
 
@@ -68,25 +68,28 @@ class _DetailsTrendingMovieWeekState extends State<DetailsTrendingMovieWeek> {
       appBar: AppBar(
         title: const Text('Trending Movies Week'),
       ),
-      body: Stack(
-        children: [
-          movieProvider.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : RefreshIndicator(
-                  onRefresh: () =>
-                      movieProvider.refreshMovies(api.getTrendingMoviesWeek),
-                  child: GridView.builder(
-                    controller: _scrollController,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      mainAxisExtent: 310,
-                    ),
-                    itemCount: movieProvider.movies.length,
-                    itemBuilder: (context, index) {
-                      Movie movie = movieProvider.movies[index];
-                      return Padding(
-                        padding: AppScreenSize.uiPadding,
-                        child: Column(
+      body: Padding(
+        padding: AppScreenSize.uiPadding,
+        child: Stack(
+          children: [
+            movieProvider.isLoadingDetailsTrendingWeek
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                    onRefresh: () =>
+                        movieProvider.refreshDetailsTrendingWeekMovies(),
+                    child: GridView.builder(
+                      padding: EdgeInsets.zero,
+                      controller: _scrollController,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        mainAxisExtent: 300,
+                        crossAxisSpacing: 16,
+                      ),
+                      itemCount: movieProvider.detailsTrendingWeekMovies.length,
+                      itemBuilder: (context, index) {
+                        Movie movie =
+                            movieProvider.detailsTrendingWeekMovies[index];
+                        return Column(
                           children: [
                             GestureDetector(
                               onTap: () {
@@ -124,19 +127,19 @@ class _DetailsTrendingMovieWeekState extends State<DetailsTrendingMovieWeek> {
                                   textStyle: const TextStyle(fontSize: 14)),
                             ),
                           ],
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-          if (movieProvider.isLoadingMore)
-            const Positioned(
-              left: 0,
-              right: 0,
-              bottom: 20,
-              child: Center(child: CircularProgressIndicator()),
-            ),
-        ],
+            if (movieProvider.isLoadingMoreDetailsTrendingWeek)
+              const Positioned(
+                left: 0,
+                right: 0,
+                bottom: 20,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        ),
       ),
     );
   }

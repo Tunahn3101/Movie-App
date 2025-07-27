@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/cast.dart';
 import '../../provider/movie_details_provider.dart';
-import '../../services/api.dart';
 import '../../themes/theme_provider.dart';
 
 class CastsScreen extends StatefulWidget {
@@ -17,52 +15,67 @@ class CastsScreen extends StatefulWidget {
 class _CastsScreenState extends State<CastsScreen> {
   @override
   Widget build(BuildContext context) {
-    //
-    MovieDetailsProvider movieDetailsProvider =
-        Provider.of<MovieDetailsProvider>(context, listen: false);
-    //
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-    //
     Color selectedColor =
         isDarkMode ? Colors.grey.shade800 : const Color(0xFFFAFAFA);
+
     return Scaffold(
       backgroundColor: selectedColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Casts',
-              style: GoogleFonts.roboto(
-                textStyle:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            FutureBuilder<CastList>(
-              future: api.getCast(movieDetailsProvider.movieDetails!.id!),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                if (!snapshot.hasData || snapshot.data!.cast!.isEmpty) {
-                  return const Text('No cast members available.');
-                }
-                var castList = snapshot.data!.cast!;
-                return Expanded(
+        child: Consumer<MovieDetailsProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoadingCast) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (provider.castError != null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: ${provider.castError}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        provider.clearCastError();
+                        if (provider.movieDetails?.id != null) {
+                          provider.loadCastData(provider.movieDetails!.id!);
+                        }
+                      },
+                      child: const Text('Thử lại'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (provider.castList?.cast == null ||
+                provider.castList!.cast!.isEmpty) {
+              return const Center(
+                child: Text('No cast members available.'),
+              );
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Casts',
+                  style: GoogleFonts.roboto(
+                    textStyle: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.w700),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
                   child: SizedBox(
                     height: 210, // Chiều cao tổng của danh sách
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: castList.length,
+                      itemCount: provider.castList!.cast!.length,
                       itemBuilder: (context, index) {
-                        Cast cast = castList[index];
+                        final cast = provider.castList!.cast![index];
                         return Container(
                           width: 115, // Chiều rộng cố định cho ảnh
                           margin: const EdgeInsets.only(right: 8),
@@ -95,10 +108,10 @@ class _CastsScreenState extends State<CastsScreen> {
                       },
                     ),
                   ),
-                );
-              },
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

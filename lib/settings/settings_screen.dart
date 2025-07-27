@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:movieapp/provider/version_app_provider.dart';
 import 'package:movieapp/services/local_notification_service.dart';
 import 'package:movieapp/settings/ui/ui_setting_list.dart';
 import 'package:movieapp/settings/ui_info_user_setting.dart';
@@ -24,16 +25,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     sp.getDataFromSharedPreferences();
   }
 
+  Future getVersionApp() async {
+    final versionApp = context.read<VersionAppProvider>();
+    versionApp.getVersionApp();
+  }
+
   @override
   void initState() {
     super.initState();
     getData();
+    getVersionApp();
   }
 
   @override
   Widget build(BuildContext context) {
     final sp = context.watch<SignInProvider>();
-
+    final versionApp = context.watch<VersionAppProvider>();
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -44,6 +51,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const UIInfoUserSetting(),
               const SizedBox(height: 24),
               const UISettingList(),
+              const SizedBox(height: 20),
+              Text(
+                'Version: ${versionApp.version}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
               const SizedBox(height: 20),
               ActionButton(
                 onPressed: () {

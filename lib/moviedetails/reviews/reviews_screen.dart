@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
-import 'package:movieapp/models/reviews.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/movie_details_provider.dart';
-import '../../services/api.dart';
 import '../../themes/theme_provider.dart';
 
 class ReviewsScreen extends StatefulWidget {
@@ -18,42 +16,54 @@ class ReviewsScreen extends StatefulWidget {
 class _ReviewsScreenState extends State<ReviewsScreen> {
   @override
   Widget build(BuildContext context) {
-    //
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-    //
     Color selectedColor =
         isDarkMode ? Colors.grey.shade800 : const Color(0xFFFAFAFA);
-    //
-    MovieDetailsProvider movieDetailsProvider =
-        Provider.of<MovieDetailsProvider>(context, listen: false);
-
-    final movieId = movieDetailsProvider.movieDetails!.id!;
 
     return Scaffold(
       backgroundColor: selectedColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: FutureBuilder<MovieReviews>(
-          future: api.getMovieReviews(movieId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+        child: Consumer<MovieDetailsProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoadingReviews) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (!snapshot.hasData || snapshot.data!.results!.isEmpty) {
+            }
+
+            if (provider.reviewsError != null) {
               return Center(
-                child: const Text(
-                  'No reviews available.',
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: ${provider.reviewsError}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        provider.clearReviewsError();
+                        if (provider.movieDetails?.id != null) {
+                          provider.loadReviewsData(provider.movieDetails!.id!);
+                        }
+                      },
+                      child: const Text('Thử lại'),
+                    ),
+                  ],
                 ),
               );
             }
-            var reviews = snapshot.data!.results!;
+
+            if (provider.reviewsList?.results == null ||
+                provider.reviewsList!.results!.isEmpty) {
+              return const Center(
+                child: Text('No reviews available.'),
+              );
+            }
+
             return ListView.builder(
               shrinkWrap: true,
-              itemCount: reviews.length,
+              itemCount: provider.reviewsList!.results!.length,
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) {
-                Results review = reviews[index];
+                final review = provider.reviewsList!.results![index];
                 return ListTile(
                   title: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

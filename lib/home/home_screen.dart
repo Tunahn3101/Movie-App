@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/tab_provider.dart';
 import '../themes/theme_provider.dart';
 import 'trendingmoviesday/trending_movies_day.dart';
 import 'ui_infor_user.dart';
@@ -21,13 +22,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    // Lấy tab index từ provider
+    final tabProvider = Provider.of<TabProvider>(context, listen: false);
+    _tabController = TabController(
+      length: 4,
+      vsync: this,
+      initialIndex: tabProvider.currentTabIndex,
+    );
+
+    // Lắng nghe thay đổi tab và lưu vào provider
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        tabProvider.setTabIndex(_tabController.index);
+      }
+    });
   }
 
   @override
   void dispose() {
-    super.dispose();
     _tabController.dispose();
+    super.dispose();
   }
 
   @override

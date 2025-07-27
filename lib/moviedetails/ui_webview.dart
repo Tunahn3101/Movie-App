@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movieapp/provider/authentication_provider.dart';
+import 'package:movieapp/provider/library_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -11,7 +11,7 @@ class UIWebView extends StatefulWidget {
 }
 
 class _UIWebViewState extends State<UIWebView> {
-  late AuthenticationProvider authenticationProvider;
+  late LibraryProvider authenticationProvider;
   late WebViewController controller;
   late String requestToken;
 
@@ -33,7 +33,7 @@ class _UIWebViewState extends State<UIWebView> {
       ));
 
     authenticationProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
+        Provider.of<LibraryProvider>(context, listen: false);
 
     _loadRequestToken();
   }

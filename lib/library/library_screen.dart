@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iconly/iconly.dart';
-import 'package:movieapp/models/details_movie_to_list.dart';
-import 'package:movieapp/provider/authentication_provider.dart';
-import 'package:movieapp/services/api.dart';
+import 'package:movieapp/provider/library_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../moviedetails/movie_details._screen.dart';
+import '../moviedetails/movie_details_screen.dart';
 import '../provider/movie_details_provider.dart';
 import '../utils/next_screen.dart';
 
@@ -18,16 +16,12 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
-  late Future<DetailsMovieToList> detailsMovieToList;
+  static const int _listId = 8301129;
 
-  void _removeMoovie(int listId, int movieId) async {
+  void _removeMovie(int listId, int movieId) async {
     try {
-      await Provider.of<AuthenticationProvider>(context, listen: false)
+      await Provider.of<LibraryProvider>(context, listen: false)
           .removeMovieFromList(listId, movieId);
-
-      setState(() {
-        detailsMovieToList = api.getDetailsMovieToList(8301129);
-      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -40,7 +34,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
   @override
   void initState() {
     super.initState();
-    detailsMovieToList = api.getDetailsMovieToList(8301129);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<LibraryProvider>(context, listen: false)
+          .loadMovieList(_listId);
+    });
   }
 
   @override
@@ -53,19 +50,51 @@ class _LibraryScreenState extends State<LibraryScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      body: FutureBuilder<DetailsMovieToList>(
-        future: detailsMovieToList,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Lỗi: ${snapshot.error}'));
-          } else if (snapshot.hasData && snapshot.data!.items!.isNotEmpty) {
-            return ListView.separated(
-              itemCount: snapshot.data!.items!.length,
+      body: Consumer<LibraryProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (provider.error != null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Lỗi: ${provider.error}'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      provider.clearError();
+                      provider.loadMovieList(_listId);
+                    },
+                    child: const Text('Thử lại'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (provider.movieList?.items == null ||
+              provider.movieList!.items!.isEmpty) {
+            return const Center(
+              child: Text('Không có dữ liệu.'),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () => provider.refreshMovieList(_listId),
+            child: ListView.separated(
+              itemCount: provider.movieList!.items!.length,
               separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
-                final movie = snapshot.data!.items![index];
+                final movieList = provider.movieList;
+                if (movieList == null || movieList.items == null) {
+                  return const SizedBox.shrink();
+                }
+                final movie = movieList.items![index];
                 return Slidable(
                   endActionPane: ActionPane(
                     motion: const ScrollMotion(),
@@ -73,7 +102,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       // slidable dùng để xóa item
                       SlidableAction(
                         onPressed: (context) {
-                          _removeMoovie(8301129, movie.id!);
+                          _removeMovie(_listId, movie.id!);
                         },
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
@@ -88,8 +117,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       nextScreen(
                           context, MovieDetailsScreen(movieId: movie.id!));
                     },
-                    leading: Image.network(
-                        'https://image.tmdb.org/t/p/w500${movie.posterPath}'),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Image.network(
+                          'https://image.tmdb.org/t/p/w500${movie.posterPath}'),
+                    ),
                     title: Text(
                         '${movie.title ?? 'Không có tiêu đề'} (${movie.releaseDate})'),
                     subtitle: Text(
@@ -97,12 +129,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   ),
                 );
               },
-            );
-          } else {
-            return const Center(
-              child: Text('Không có dữ liệu.'),
-            );
-          }
+            ),
+          );
         },
       ),
     );
