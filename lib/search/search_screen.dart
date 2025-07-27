@@ -3,7 +3,7 @@ import 'package:movieapp/common/app_screen_size.dart';
 import 'package:movieapp/provider/movie_search_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../moviedetails/movie_details._screen.dart';
+import '../moviedetails/movie_details_screen.dart';
 import '../provider/movie_details_provider.dart';
 import '../themes/theme_provider.dart';
 import '../utils/next_screen.dart';
@@ -31,6 +31,14 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Load data cho SliderImage và TrendingMoviesWeek
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<MovieSearchProvider>(context, listen: false);
+      provider.loadSliderMovies();
+      provider.loadTrendingWeekMovies();
+    });
+
     // Lắng nghe sự thay đổi của text controller
     _searchController.addListener(() {
       final query = _searchController.text;
@@ -80,13 +88,24 @@ class _SearchScreenState extends State<SearchScreen> {
           children: [
             const SizedBox(height: 50),
             InputSearchScreen(
-                controller: _searchController, onSearch: _handleSearch),
+              controller: _searchController,
+              onSearch: _handleSearch,
+            ),
             Expanded(
               child: Consumer<MovieSearchProvider>(
                 builder: (context, provider, _) {
+                  // Loading chung cho initial data
+                  if (provider.isLoadingInitialData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
                   if (_searchController.text.isNotEmpty &&
                       provider.isSearching) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   } else if (_searchController.text.isNotEmpty &&
                       provider.movieList != null) {
                     return RefreshIndicator(

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../themes/theme_provider.dart';
 
-class InputSearchScreen extends StatelessWidget {
+class InputSearchScreen extends StatefulWidget {
   const InputSearchScreen({
     super.key,
     required this.controller,
@@ -13,6 +13,13 @@ class InputSearchScreen extends StatelessWidget {
   });
   final TextEditingController controller;
   final void Function(String) onSearch;
+
+  @override
+  State<InputSearchScreen> createState() => _InputSearchScreenState();
+}
+
+class _InputSearchScreenState extends State<InputSearchScreen> {
+  bool isShowClearText = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +45,16 @@ class InputSearchScreen extends StatelessWidget {
             const SizedBox(width: 3),
             Expanded(
               child: TextField(
-                controller: controller,
-                onChanged: onSearch,
+                onTapOutside: (event) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
+                controller: widget.controller,
+                onChanged: (value) {
+                  setState(() {
+                    isShowClearText = value.isNotEmpty;
+                  });
+                  widget.onSearch(value);
+                },
                 style: TextStyle(
                   fontFamily: GoogleFonts.roboto().fontFamily,
                   color: isDarkMode ? Colors.white : Colors.black,
@@ -52,16 +67,20 @@ class InputSearchScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 3),
-            InkWell(
-              onTap: () {
-                controller.clear();
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: Icon(
-                IconlyLight.close_square,
-                color: isDarkMode ? Colors.white : Colors.black,
-              ),
-            )
+            if (isShowClearText)
+              InkWell(
+                onTap: () {
+                  widget.controller.clear();
+                  setState(() {
+                    isShowClearText = false;
+                  });
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
+                child: Icon(
+                  IconlyLight.close_square,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              )
           ],
         ),
       ),

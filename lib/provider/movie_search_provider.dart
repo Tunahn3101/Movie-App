@@ -11,9 +11,28 @@ class MovieSearchProvider with ChangeNotifier {
   int _currentPage = 1;
   String _currentQuery = '';
 
+  // Data cho SliderImage (Top Rated Movies)
+  List<Movie> _sliderMovies = [];
+  bool _isLoadingSlider = false;
+
+  // Data cho TrendingMoviesWeek
+  List<Movie> _trendingWeekMovies = [];
+  bool _isLoadingTrendingWeek = false;
+
   List<Movie>? get movieList => _movieList;
   bool get hasMoreResults =>
       _searchResults != null && _currentPage < _searchResults!.totalPages!;
+
+  // Getters cho SliderImage
+  List<Movie> get sliderMovies => _sliderMovies;
+  bool get isLoadingSlider => _isLoadingSlider;
+
+  // Getters cho TrendingMoviesWeek
+  List<Movie> get trendingWeekMovies => _trendingWeekMovies;
+  bool get isLoadingTrendingWeek => _isLoadingTrendingWeek;
+
+  // Getter cho loading chung
+  bool get isLoadingInitialData => _isLoadingSlider || _isLoadingTrendingWeek;
 
   Future<void> searchMovies(String query) async {
     if (query.isEmpty) {
@@ -72,5 +91,56 @@ class MovieSearchProvider with ChangeNotifier {
       isSearching = false;
       notifyListeners();
     }
+  }
+
+  // Load data cho SliderImage (Top Rated Movies)
+  Future<void> loadSliderMovies() async {
+    if (_sliderMovies.isNotEmpty) return; // Nếu đã có data thì không load lại
+
+    _isLoadingSlider = true;
+    notifyListeners();
+
+    try {
+      final moviesList = await api.getTopRatedMovies();
+      _sliderMovies = moviesList.results ?? [];
+      _isLoadingSlider = false;
+      notifyListeners();
+    } catch (e) {
+      print('Error loading slider movies: $e');
+      _isLoadingSlider = false;
+      notifyListeners();
+    }
+  }
+
+  // Load data cho TrendingMoviesWeek
+  Future<void> loadTrendingWeekMovies() async {
+    if (_trendingWeekMovies.isNotEmpty)
+      return; // Nếu đã có data thì không load lại
+
+    _isLoadingTrendingWeek = true;
+    notifyListeners();
+
+    try {
+      final moviesList = await api.getTrendingMoviesWeek(1);
+      _trendingWeekMovies = moviesList.results ?? [];
+      _isLoadingTrendingWeek = false;
+      notifyListeners();
+    } catch (e) {
+      print('Error loading trending week movies: $e');
+      _isLoadingTrendingWeek = false;
+      notifyListeners();
+    }
+  }
+
+  // Refresh data cho SliderImage
+  Future<void> refreshSliderMovies() async {
+    _sliderMovies.clear();
+    await loadSliderMovies();
+  }
+
+  // Refresh data cho TrendingMoviesWeek
+  Future<void> refreshTrendingWeekMovies() async {
+    _trendingWeekMovies.clear();
+    await loadTrendingWeekMovies();
   }
 }

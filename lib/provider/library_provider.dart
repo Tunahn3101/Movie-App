@@ -1,14 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
+import 'package:movieapp/models/details_movie_to_list.dart';
 import 'package:movieapp/services/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthenticationProvider with ChangeNotifier {
+class LibraryProvider with ChangeNotifier {
   Dio dio = Dio(options);
   String _sessionID = '';
 
+  // Data cho Library Screen
+  DetailsMovieToList? _movieList;
+  bool _isLoading = false;
+  String? _error;
+
   // Getter để truy cập Session ID
   String get sessionID => _sessionID;
+
+  // Getters cho Library Screen
+  DetailsMovieToList? get movieList => _movieList;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
 
   // Lấy Request Token
   Future<String> getRequestToken() async {
@@ -108,9 +119,52 @@ class AuthenticationProvider with ChangeNotifier {
           'session_id': sessionID,
         },
       );
+
+      // Reload movie list sau khi xóa
+      await loadMovieList(listId);
       notifyListeners();
     } catch (e) {
+      _error = e.toString();
+      notifyListeners();
       rethrow;
     }
+  }
+
+  // Load movie list
+  Future<void> loadMovieList(int listId) async {
+    if (_isLoading) return; // Tránh load nhiều lần cùng lúc
+
+    // Nếu đã có data thì không load lại
+    if (_movieList != null &&
+        _movieList!.items != null &&
+        _movieList!.items!.isNotEmpty) {
+      return;
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      _movieList = await api.getDetailsMovieToList(listId);
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  // Refresh movie list
+  Future<void> refreshMovieList(int listId) async {
+    _movieList = null; // Clear cache
+    await loadMovieList(listId);
+  }
+
+  // Clear error
+  void clearError() {
+    _error = null;
+    notifyListeners();
   }
 }

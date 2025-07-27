@@ -44,18 +44,21 @@ class _UiBottomNavigationState extends State<UiBottomNavigation> {
   Widget build(BuildContext context) {
     bool isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
-    final selectedColor = isDarkMode ? Colors.white : const Color.fromARGB(255, 23, 23, 23);
+    final selectedColor =
+        isDarkMode ? Colors.white : const Color.fromARGB(255, 23, 23, 23);
     return Scaffold(
       extendBody: true,
       body: _selectedPage(),
       bottomNavigationBar: CrystalNavigationBar(
         margin: EdgeInsets.zero,
-        marginR: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+        marginR: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        paddingR: EdgeInsets.zero,
         currentIndex: _SelectedTab.values.indexOf(_selectedTab),
         // indicatorColor: Colors.white,
         unselectedItemColor: Colors.white70,
         backgroundColor: Colors.black.withOpacity(0.1),
         // outlineBorderColor: Colors.black.withOpacity(0.1),
+
         onTap: _handleIndexChanged,
         items: [
           /// Home
