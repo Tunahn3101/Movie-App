@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:movieapp/models/details_movie_to_list.dart';
 import 'package:movieapp/models/reviews.dart';
 
@@ -21,12 +23,41 @@ class MoviesApi {
   Dio dio = Dio(options);
   static const String apiKey = movieDbKey;
 
+  // Setup logger
+  static final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 2,
+      errorMethodCount: 8,
+      lineLength: 120,
+      colors: true,
+      printEmojis: true,
+      dateTimeFormat: (time) => time.toString(),
+    ),
+  );
+
+  MoviesApi() {
+    // Setup pretty_dio_logger cho Dio
+    dio.interceptors.add(
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: false,
+        error: true,
+        compact: true,
+        maxWidth: 90,
+      ),
+    );
+  }
+
   /// Xử lý phản hồi từ API
   dynamic _handleResponse(Response response) {
     if (response.statusCode == 200) {
       // OK
       return response.data;
     } else {
+      _logger.e(
+          '❌ API Response Error: ${response.statusCode} - ${response.requestOptions.path}');
       throw Exception('Lỗi từ server: ${response.statusCode}');
     }
   }
@@ -36,6 +67,11 @@ class MoviesApi {
     var message = e.response != null
         ? 'Lỗi từ server: ${e.response?.statusCode}'
         : 'Lỗi kết nối mạng.';
+
+    _logger.e('❌ Dio Error: $message');
+    _logger.e('❌ Request URL: ${e.requestOptions.path}');
+    _logger.e('❌ Error Type: ${e.type}');
+
     return Exception(message);
   }
 

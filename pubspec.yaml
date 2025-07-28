@@ -60,6 +60,8 @@ dependencies:
   flutter_local_notifications: ^19.1.0
   sign_in_with_apple: ^7.0.1
   package_info_plus: ^8.3.0
+  logger: ^2.6.1
+  pretty_dio_logger: ^1.4.0
 
 dev_dependencies:
   flutter_test:
